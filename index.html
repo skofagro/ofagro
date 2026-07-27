@@ -233,6 +233,39 @@
   }
   .article-readmore:hover{ color: var(--gold-soft); }
 
+  /* ---------- ARTICLE ACTIONS (like / comment / share) ---------- */
+  .article-actions{
+    display:flex; align-items:center; gap:18px; margin-top:16px; padding-top:14px;
+    border-top:1px solid var(--line); flex-wrap:wrap;
+  }
+  .action-btn{
+    background:none; border:none; color: var(--muted); font-family:'Inter',sans-serif;
+    font-size:0.84rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    padding:4px 0; transition: color 0.15s ease;
+  }
+  .action-btn:hover{ color: var(--cream); }
+  .action-btn .icon{ font-size:0.95rem; line-height:1; }
+  .like-btn.liked{ color: var(--clay); }
+  .like-btn.liked:hover{ color: var(--clay); }
+  .share-wrapper{ position:relative; }
+  .share-menu{
+    display:none; position:absolute; bottom:calc(100% + 8px); left:0; z-index:20;
+    background: var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:8px; min-width:160px; box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+  .share-menu.open{ display:flex; flex-direction:column; gap:2px; }
+  .share-menu a, .share-menu button{
+    display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:4px;
+    color: var(--cream); font-size:0.84rem; background:none; border:none; text-align:left;
+    cursor:pointer; font-family:'Inter',sans-serif; width:100%;
+  }
+  .share-menu a:hover, .share-menu button:hover{ background: var(--bg-alt); }
+
+  .article-modal-actions{
+    display:flex; align-items:center; gap:18px; margin-top:26px; padding-top:18px;
+    border-top:1px solid var(--line); flex-wrap:wrap;
+  }
+
   /* ---------- ARTICLE MODAL ---------- */
   .article-modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(10,12,8,0.82);
@@ -448,26 +481,31 @@
         <h3 id="i18n-a1-h3">Cara Meningkatkan Hasil Padi Secara Bertahap</h3>
         <p id="i18n-a1-p">Langkah praktis memperbaiki pola tanam dan pemupukan tanpa menambah biaya besar.</p>
         <button class="article-readmore" id="i18n-a1-readmore" onclick="openArticle('a1')">Baca Selengkapnya →</button>
+        <div class="article-actions" id="actions-a1-card"></div>
       </div>
       <div class="article-card">
         <span class="tag" id="i18n-a2-tag">Analisis Usaha</span>
         <h3 id="i18n-a2-h3">Menghitung BEP Usaha Cabai dalam 5 Menit</h3>
         <p id="i18n-a2-p">Kerangka sederhana menghitung titik impas sebelum memulai musim tanam baru.</p>
         <button class="article-readmore" id="i18n-a2-readmore" onclick="openArticle('a2')">Baca Selengkapnya →</button>
+        <div class="article-actions" id="actions-a2-card"></div>
       </div>
       <div class="article-card">
         <span class="tag" id="i18n-a3-tag">Teknologi</span>
         <h3 id="i18n-a3-h3">Greenhouse Kecil untuk Lahan Terbatas</h3>
         <p id="i18n-a3-p">Pertimbangan biaya dan desain greenhouse skala rumah tangga atau UMKM.</p>
         <button class="article-readmore" id="i18n-a3-readmore" onclick="openArticle('a3')">Baca Selengkapnya →</button>
+        <div class="article-actions" id="actions-a3-card"></div>
       </div>
       <div class="article-card">
         <span class="tag" id="i18n-a4-tag">Berita</span>
         <h3 id="i18n-a4-h3">Meski Sudah Surplus, Sumedang Genjot Produktivitas Padi dan Serapan Gabah</h3>
         <p id="i18n-a4-p">Startup agritech dan kemitraan antar-BUMD ikut memperkuat produktivitas serta penyerapan gabah petani Sumedang.</p>
         <button class="article-readmore" id="i18n-a4-readmore" onclick="openArticle('a4')">Baca Selengkapnya →</button>
+        <div class="article-actions" id="actions-a4-card"></div>
       </div>
     </div>
+    <p style="margin-top:18px; font-size:0.78rem; color: var(--muted);" id="i18n-comment-note">💬 Komentar dibuka di postingan Instagram terkait masing-masing artikel.</p>
   </div>
 </section>
 
@@ -542,6 +580,7 @@
     <span class="tag" id="article-modal-tag"></span>
     <h2 id="article-modal-title"></h2>
     <div class="article-modal-body" id="article-modal-body"></div>
+    <div class="article-modal-actions" id="article-modal-actions"></div>
   </div>
 </div>
 
@@ -695,23 +734,148 @@ const articleContent = {
   }
 };
 
-function openArticle(articleId){
+const articleInstagramLinks = {
+  a1: "https://instagram.com/ofagro",
+  a2: "https://instagram.com/ofagro",
+  a3: "https://instagram.com/ofagro",
+  a4: "https://instagram.com/ofagro"
+};
+
+const actionLabels = {
+  like: {id:"Suka", en:"Like"},
+  liked: {id:"Disukai", en:"Liked"},
+  comment: {id:"Komentar", en:"Comment"},
+  share: {id:"Bagikan", en:"Share"},
+  copyLink: {id:"Salin Link", en:"Copy Link"},
+  copied: {id:"Tersalin!", en:"Copied!"},
+  shareWa: {id:"Bagikan ke WhatsApp", en:"Share to WhatsApp"},
+  shareFb: {id:"Bagikan ke Facebook", en:"Share to Facebook"}
+};
+
+function getArticleUrl(articleId){
+  return location.origin + location.pathname + '#artikel-' + articleId;
+}
+
+function isLiked(articleId){
+  try { return localStorage.getItem('ofagro-like-' + articleId) === 'true'; } catch(e){ return false; }
+}
+
+function actionsBarHTML(articleId, suffix){
+  const lang = document.documentElement.lang || 'id';
+  const liked = isLiked(articleId);
+  const data = articleContent[articleId];
+  const title = data ? data.title[lang] : '';
+  const url = getArticleUrl(articleId);
+  const igLink = articleInstagramLinks[articleId] || 'https://instagram.com/ofagro';
+  const waHref = 'https://wa.me/?text=' + encodeURIComponent(title + ' — ' + url);
+  const fbHref = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+  const menuId = 'share-menu-' + articleId + '-' + suffix;
+
+  return `
+    <button class="action-btn like-btn ${liked ? 'liked' : ''}" id="like-${articleId}-${suffix}" onclick="toggleLike('${articleId}')">
+      <span class="icon">${liked ? '❤️' : '🤍'}</span>
+      <span>${liked ? actionLabels.liked[lang] : actionLabels.like[lang]}</span>
+    </button>
+    <a class="action-btn" href="${igLink}" target="_blank" rel="noopener">
+      <span class="icon">💬</span><span>${actionLabels.comment[lang]}</span>
+    </a>
+    <div class="share-wrapper">
+      <button class="action-btn" onclick="toggleShareMenu('${menuId}')">
+        <span class="icon">🔗</span><span>${actionLabels.share[lang]}</span>
+      </button>
+      <div class="share-menu" id="${menuId}">
+        <a href="${waHref}" target="_blank" rel="noopener">📱 ${actionLabels.shareWa[lang]}</a>
+        <a href="${fbHref}" target="_blank" rel="noopener">📘 ${actionLabels.shareFb[lang]}</a>
+        <button onclick="copyArticleLink('${articleId}', this)">🔗 ${actionLabels.copyLink[lang]}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderAllActionBars(){
+  Object.keys(articleContent).forEach(function(id){
+    const cardEl = document.getElementById('actions-' + id + '-card');
+    if (cardEl) cardEl.innerHTML = actionsBarHTML(id, 'card');
+  });
+  const overlay = document.getElementById('article-modal-overlay');
+  if (overlay && overlay.classList.contains('open')){
+    const modalActions = document.getElementById('article-modal-actions');
+    const openId = overlay.dataset.openId;
+    if (modalActions && openId) modalActions.innerHTML = actionsBarHTML(openId, 'modal');
+  }
+}
+
+function toggleLike(articleId){
+  const liked = isLiked(articleId);
+  try { localStorage.setItem('ofagro-like-' + articleId, (!liked).toString()); } catch(e){}
+  renderAllActionBars();
+}
+
+function toggleShareMenu(menuId){
+  document.querySelectorAll('.share-menu.open').forEach(function(el){
+    if (el.id !== menuId) el.classList.remove('open');
+  });
+  const menu = document.getElementById(menuId);
+  if (menu) menu.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e){
+  if (!e.target.closest('.share-wrapper')){
+    document.querySelectorAll('.share-menu.open').forEach(function(el){ el.classList.remove('open'); });
+  }
+});
+
+function copyArticleLink(articleId, btnEl){
+  const url = getArticleUrl(articleId);
+  const lang = document.documentElement.lang || 'id';
+  const finish = function(){
+    if (btnEl){
+      const original = btnEl.textContent;
+      btnEl.textContent = '✅ ' + actionLabels.copied[lang];
+      setTimeout(function(){ btnEl.textContent = original; }, 1800);
+    }
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(finish).catch(finish);
+  } else {
+    finish();
+  }
+}
+
+function openArticle(articleId, fromHash){
   const data = articleContent[articleId];
   const lang = document.documentElement.lang || 'id';
   document.getElementById('article-modal-tag').textContent = data.tag[lang];
   document.getElementById('article-modal-title').textContent = data.title[lang];
   document.getElementById('article-modal-body').innerHTML = data.body[lang];
-  document.getElementById('article-modal-overlay').classList.add('open');
+  const overlay = document.getElementById('article-modal-overlay');
+  overlay.dataset.openId = articleId;
+  overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('article-modal-actions').innerHTML = actionsBarHTML(articleId, 'modal');
+  if (!fromHash){
+    history.replaceState(null, '', '#artikel-' + articleId);
+  }
 }
 
 function closeArticle(){
   document.getElementById('article-modal-overlay').classList.remove('open');
   document.body.style.overflow = '';
+  if (location.hash.startsWith('#artikel-')){
+    history.replaceState(null, '', location.pathname);
+  }
 }
 
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') closeArticle();
+});
+
+window.addEventListener('load', function(){
+  const m = location.hash.match(/^#artikel-(a\d+)$/);
+  if (m && articleContent[m[1]]){
+    document.getElementById('artikel').scrollIntoView();
+    openArticle(m[1], true);
+  }
 });
 
 const translations = {
@@ -824,7 +988,8 @@ const translations = {
   "i18n-booking-p": {id:"Cara tercepat mendapat jawaban: kirim pesan WhatsApp dengan kebutuhan Anda, atau kirim email untuk permintaan yang lebih detail.", en:"The fastest way to get a reply: send a WhatsApp message with your needs, or email us for more detailed requests."},
   "i18n-form-submit": {id:"Kirim Permintaan", en:"Send Request"},
 
-  "i18n-footer-tagline": {id:"Edukasi &amp; Konsultan Agribisnis · Green Business · Trading Hasil Pertanian", en:"Agricultural Education &amp; Consulting · Green Business · Produce Trading"}
+  "i18n-footer-tagline": {id:"Edukasi &amp; Konsultan Agribisnis · Green Business · Trading Hasil Pertanian", en:"Agricultural Education &amp; Consulting · Green Business · Produce Trading"},
+  "i18n-comment-note": {id:"💬 Komentar dibuka di postingan Instagram terkait masing-masing artikel.", en:"💬 Comments open on the related Instagram post for each article."}
 };
 
 const placeholderTranslations = {
@@ -865,21 +1030,18 @@ function setLang(lang){
   try { localStorage.setItem('ofagro-lang', lang); } catch(e) {}
 
   const overlay = document.getElementById('article-modal-overlay');
-  if (overlay && overlay.classList.contains('open')){
-    const openTag = document.getElementById('article-modal-tag').textContent;
-    for (const key in articleContent){
-      if (articleContent[key].tag.id === openTag || articleContent[key].tag.en === openTag){
-        openArticle(key);
-        break;
-      }
-    }
+  if (overlay && overlay.classList.contains('open') && overlay.dataset.openId){
+    openArticle(overlay.dataset.openId, true);
   }
+
+  renderAllActionBars();
 }
 
 document.addEventListener('DOMContentLoaded', function(){
   let saved = 'id';
   try { saved = localStorage.getItem('ofagro-lang') || 'id'; } catch(e) {}
   setLang(saved);
+  renderAllActionBars();
 });
 </script>
 
