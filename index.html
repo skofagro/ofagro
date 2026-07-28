@@ -331,6 +331,100 @@
     font-size: 0.85rem; color: var(--muted);
   }
   footer .brand{ font-size:1rem; }
+
+  /* ---------- PRODUCTS ---------- */
+  .produk-sub{
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+    margin: 60px 0 0; padding-bottom:14px; border-bottom:1px solid var(--line);
+  }
+  .produk-sub{ scroll-margin-top: 92px; }
+  #produk{ scroll-margin-top: 72px; }
+  .produk-sub h3{ font-size:1.15rem; color: var(--cream); }
+  .produk-sub span{ font-family:'JetBrains Mono',monospace; font-size:0.74rem; color: var(--muted); }
+
+  .products-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:20px; margin-top: 26px; }
+  .product-card{
+    background: var(--panel); border:1px solid var(--line); border-radius:6px;
+    display:flex; flex-direction:column; overflow:hidden;
+    transition: border-color 0.18s ease;
+  }
+  .product-card:hover, .product-card:focus-within{ border-color: var(--gold); }
+  .product-media{
+    aspect-ratio: 4 / 3; border-bottom:1px solid var(--line);
+    background: linear-gradient(160deg, rgba(61,90,40,0.5), rgba(18,22,15,0.9));
+  }
+  .product-media svg{ width:100%; height:100%; display:block; }
+  .product-body{ padding: 26px 24px 26px; display:flex; flex-direction:column; flex:1; }
+  .product-card h3{ font-size:1.2rem; color: var(--cream); margin-bottom:10px; }
+  .product-desc{ color: var(--muted); font-size:0.92rem; }
+  .product-spec{ list-style:none; margin:18px 0 20px; flex-grow:1; }
+  .product-spec li{
+    display:flex; justify-content:space-between; gap:12px; padding:8px 0;
+    border-top:1px solid var(--line); color: var(--muted); font-size:0.88rem;
+  }
+  .product-spec li:first-child{ border-top:none; }
+  .product-spec b{ font-family:'JetBrains Mono',monospace; font-weight:500; font-size:0.82rem; color: var(--cream); }
+  .product-card .btn{ justify-content:center; }
+  .product-wholesale{ margin-top:12px; font-size:0.78rem; color: var(--muted); text-align:center; }
+  .product-wholesale a{ color: var(--gold-soft); border-bottom:1px solid transparent; }
+  .product-wholesale a:hover{ border-bottom-color: var(--gold-soft); }
+
+  .product-trust{ list-style:none; display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; }
+  .product-trust li{
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem; color: var(--muted);
+    border:1px solid var(--line); border-radius:999px; padding:6px 14px;
+  }
+
+  .ebook-card{
+    margin-top:26px; background: var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:30px; display:grid; grid-template-columns: 210px 1fr; gap:34px; align-items:center;
+  }
+  .ebook-cover{ border-radius:4px; overflow:hidden; box-shadow: 0 18px 40px -18px rgba(0,0,0,0.85); }
+  .ebook-cover svg{ width:100%; height:auto; display:block; }
+  .ebook-card h3{ font-size:1.35rem; color: var(--cream); margin-bottom:12px; }
+  .ebook-desc{ color: var(--muted); font-size:0.95rem; }
+  .ebook-meta{ list-style:none; display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 6px; }
+  .ebook-meta li{
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem; color: var(--gold-soft);
+    border:1px solid var(--line); border-radius:3px; padding:5px 10px;
+  }
+  .ebook-note{ margin-top:16px; font-size:0.8rem; color: var(--muted); }
+
+  @media (max-width: 860px){
+    .products-grid{ grid-template-columns:1fr; }
+    .ebook-card{ grid-template-columns:1fr; }
+    .ebook-cover{ max-width:200px; }
+  }
+
+  /* ---------- NAV DROPDOWN ---------- */
+  .navlinks .has-sub{ position:relative; }
+  .navlinks .sub-toggle{
+    display:inline-flex; align-items:center; gap:6px;
+    background:none; border:none; padding:0;
+    font-family:'Inter',sans-serif; font-size:0.92rem; line-height:1.6;
+    color: var(--muted); cursor:pointer;
+  }
+  .navlinks .sub-toggle:hover{ color: var(--gold-soft); }
+  .navlinks .sub-toggle[aria-expanded="true"]{ color: var(--gold-soft); }
+  .navlinks .sub-toggle svg{ transition: transform 0.18s ease; }
+  .navlinks .sub-toggle[aria-expanded="true"] svg{ transform: rotate(180deg); }
+  .submenu{
+    position:absolute; top: calc(100% + 16px); left:-14px; min-width:224px;
+    list-style:none; background: var(--panel); border:1px solid var(--line);
+    border-radius:6px; padding:8px; display:none; z-index:60;
+    box-shadow: 0 20px 44px -20px rgba(0,0,0,0.9);
+  }
+  .sub-toggle[aria-expanded="true"] + .submenu{ display:block; }
+  .submenu a{ display:block; padding:10px 12px; border-radius:4px; color: var(--cream); font-size:0.9rem; }
+  .submenu a:hover{ background: var(--bg-alt); color: var(--gold-soft); }
+  .submenu small{
+    display:block; margin-top:3px; color: var(--muted);
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .navlinks .sub-toggle svg{ transition:none; }
+  }
+
 </style>
 </head>
 <body>
@@ -341,6 +435,13 @@
     <div class="navlinks">
       <a href="#about" id="i18n-nav-about">Ofagro</a>
       <a href="#portofolio" id="i18n-nav-portfolio">Portofolio</a>
+      <div class="has-sub">
+        <button class="sub-toggle" aria-expanded="false" aria-controls="submenu-produk" id="i18n-nav-products">Produk<svg width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <ul class="submenu" id="submenu-produk">
+          <li><a href="#produk-pertanian" id="i18n-sub-farm">Produk Pertanian<small>Pupuk &amp; pestisida organik</small></a></li>
+          <li><a href="#ebook" id="i18n-sub-ebook">Ebook<small>Terbitan PT Stel Kendo Ofagro</small></a></li>
+        </ul>
+      </div>
       <a href="#layanan" id="i18n-nav-services">Layanan</a>
       <a href="#artikel" id="i18n-nav-articles">Artikel</a>
       <a href="#booking" id="i18n-nav-join">Ikut</a>
@@ -486,6 +587,103 @@
     <p style="margin-top:18px; font-size:0.78rem; color: var(--muted);" id="i18n-comment-note">💬 Komentar dibuka di postingan Instagram terkait masing-masing artikel.</p>
   </div>
 </section>
+
+<section id="produk">
+  <div class="wrap">
+    <span class="kicker" id="i18n-products-kicker">Produk</span>
+    <div class="section-head">
+      <h2 id="i18n-products-h2">Yang bisa Anda beli hari ini.</h2>
+      <p id="i18n-products-p">Berbeda dari kemitraan trading yang berjalan per kontrak pasokan, bagian ini berisi produk siap kirim yang bisa dipesan langsung — beserta terbitan edukasi kami.</p>
+    </div>
+
+    <div class="produk-sub" id="produk-pertanian">
+      <h3 id="i18n-farm-h3">Produk Pertanian</h3>
+      <span id="i18n-farm-note">Pupuk &amp; pestisida organik · kirim 1–3 hari kerja</span>
+    </div>
+
+    <div class="products-grid">
+      <article class="product-card">
+        <div class="product-media"><svg viewBox="0 0 400 300" role="img" aria-label="Foto produk menyusul"><rect x="186" y="66" width="28" height="20" rx="4" fill="none" stroke="var(--green)" stroke-width="2" opacity=".8"/><path d="M178 96h44l14 34v78a10 10 0 0 1-10 10h-52a10 10 0 0 1-10-10v-78z" fill="none" stroke="var(--green)" stroke-width="2" opacity=".8"/><rect x="176" y="140" width="48" height="42" rx="3" fill="var(--gold-soft)" opacity=".22"/><text x="200" y="252" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--muted)">Foto menyusul</text></svg></div>
+        <div class="product-body">
+          <h3 id="i18n-pr1-name">Pupuk Organik Cair</h3>
+          <p class="product-desc" id="i18n-pr1-desc">[ISI] Bahan baku, kandungan hara, dan komoditas yang cocok.</p>
+          <ul class="product-spec" id="i18n-pr1-spec">
+            <li><span>Netto</span> <b>[ISI]</b></li>
+            <li><span>Dosis</span> <b>[ISI]</b></li>
+            <li><span>No. pendaftaran</span> <b>[ISI]</b></li>
+          </ul>
+          <div class="price" id="i18n-pr1-price">Rp[ISI]<span>belum termasuk ongkir</span></div>
+          <a class="btn btn-primary" href="#" target="_blank" rel="noopener" id="i18n-pr1-btn">Beli sekarang</a>
+          <p class="product-wholesale" id="i18n-pr1-whole">Pesanan grosir? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pupuk%20Organik%20Cair." target="_blank" rel="noopener">Minta harga khusus</a></p>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-media"><svg viewBox="0 0 400 300" role="img" aria-label="Foto produk menyusul"><path d="M158 200l42-92 42 92z" fill="none" stroke="var(--green)" stroke-width="2" opacity=".8"/><circle cx="180" cy="192" r="8" fill="var(--gold-soft)" opacity=".3"/><circle cx="200" cy="176" r="8" fill="var(--gold-soft)" opacity=".3"/><circle cx="220" cy="192" r="8" fill="var(--gold-soft)" opacity=".3"/><text x="200" y="252" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--muted)">Foto menyusul</text></svg></div>
+        <div class="product-body">
+          <h3 id="i18n-pr2-name">Pupuk Organik Granul</h3>
+          <p class="product-desc" id="i18n-pr2-desc">[ISI] Bahan baku, kandungan C-organik, dan waktu aplikasi.</p>
+          <ul class="product-spec" id="i18n-pr2-spec">
+            <li><span>Netto</span> <b>[ISI]</b></li>
+            <li><span>Dosis</span> <b>[ISI]</b></li>
+            <li><span>No. pendaftaran</span> <b>[ISI]</b></li>
+          </ul>
+          <div class="price" id="i18n-pr2-price">Rp[ISI]<span>belum termasuk ongkir</span></div>
+          <a class="btn btn-primary" href="#" target="_blank" rel="noopener" id="i18n-pr2-btn">Beli sekarang</a>
+          <p class="product-wholesale" id="i18n-pr2-whole">Pesanan grosir? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pupuk%20Organik%20Granul." target="_blank" rel="noopener">Minta harga khusus</a></p>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-media"><svg viewBox="0 0 400 300" role="img" aria-label="Foto produk menyusul"><path d="M200 84c22 22 22 62 0 84-22-22-22-62 0-84z" fill="var(--gold-soft)" opacity=".2"/><path d="M200 84c22 22 22 62 0 84-22-22-22-62 0-84z" fill="none" stroke="var(--green)" stroke-width="2" opacity=".8"/><path d="M200 84v122" stroke="var(--green)" stroke-width="2" opacity=".6"/><path d="M154 130c16 0 26 10 26 24" fill="none" stroke="var(--green)" stroke-width="2" opacity=".55"/><text x="200" y="252" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--muted)">Foto menyusul</text></svg></div>
+        <div class="product-body">
+          <h3 id="i18n-pr3-name">Pestisida Nabati</h3>
+          <p class="product-desc" id="i18n-pr3-desc">[ISI] Bahan aktif nabati, hama sasaran, dan cara aplikasi.</p>
+          <ul class="product-spec" id="i18n-pr3-spec">
+            <li><span>Netto</span> <b>[ISI]</b></li>
+            <li><span>Dosis</span> <b>[ISI]</b></li>
+            <li><span>No. pendaftaran</span> <b>[ISI]</b></li>
+          </ul>
+          <div class="price" id="i18n-pr3-price">Rp[ISI]<span>belum termasuk ongkir</span></div>
+          <a class="btn btn-primary" href="#" target="_blank" rel="noopener" id="i18n-pr3-btn">Beli sekarang</a>
+          <p class="product-wholesale" id="i18n-pr3-whole">Pesanan grosir? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pestisida%20Nabati." target="_blank" rel="noopener">Minta harga khusus</a></p>
+        </div>
+      </article>
+    </div>
+
+    <ul class="product-trust" id="i18n-trust">
+      <li>QRIS · transfer bank · e-wallet</li>
+      <li>Ongkir dihitung saat checkout</li>
+      <li>Dikirim dari [ISI kota]</li>
+      <li>Butuh saran dosis? Hubungi kami</li>
+    </ul>
+
+    <div class="produk-sub" id="ebook">
+      <h3 id="i18n-ebook-h3">Ebook</h3>
+      <span id="i18n-ebook-note">Terbitan PT Stel Kendo Ofagro</span>
+    </div>
+
+    <article class="ebook-card">
+      <div class="ebook-cover"><svg viewBox="0 0 300 424" role="img" aria-label="Sampul buku saku"><rect width="300" height="424" fill="#12160f"/><rect x="0" y="0" width="9" height="424" fill="var(--gold)"/><text x="34" y="66" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="5" fill="var(--gold-soft)">OFAGRO</text><text x="34" y="186" font-family="Fraunces, serif" font-size="30" fill="#f2ede0">Buku Saku</text><text x="34" y="222" font-family="Fraunces, serif" font-size="30" fill="#f2ede0">Edukasi</text><text x="34" y="258" font-family="Fraunces, serif" font-size="30" fill="#f2ede0">Lab Sampah</text><rect x="34" y="282" width="52" height="2" fill="var(--gold)"/><text x="34" y="384" font-family="JetBrains Mono, monospace" font-size="10" fill="#9ba48c">PT STEL KENDO OFAGRO</text></svg></div>
+      <div>
+        <h3 id="i18n-eb1-name">Buku Saku Edukasi Lab Sampah</h3>
+        <p class="ebook-desc" id="i18n-eb1-desc">Panduan ringkas pengelolaan dan pemilahan sampah untuk warga, pengelola lingkungan, pelaku UMKM, dan karyawan. Disusun dalam bahasa sehari-hari dan bisa langsung dipakai sebagai bahan pelatihan komunitas.</p>
+        <ul class="ebook-meta" id="i18n-eb1-meta">
+          <li>PDF</li>
+          <li>Format cetak A5</li>
+          <li>Bahasa Indonesia</li>
+          <li>[ISI] halaman</li>
+        </ul>
+        <div class="price" id="i18n-eb1-price">Rp[ISI]<span>unduh langsung, tanpa ongkir</span></div>
+        <a class="btn btn-primary" href="#" target="_blank" rel="noopener" id="i18n-eb1-btn">Beli &amp; unduh</a>
+        <p class="ebook-note" id="i18n-eb1-note">File dikirim otomatis ke email Anda setelah pembayaran. Judul berikutnya sedang disiapkan.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<svg class="furrow" viewBox="0 0 1080 64" preserveAspectRatio="none">
+  <path d="M0 32 Q 270 8 540 32 T 1080 32"></path>
+  <path d="M0 44 Q 270 20 540 44 T 1080 44"></path>
+</svg>
 
 <section id="layanan">
   <div class="wrap">
@@ -1142,6 +1340,45 @@ const translations = {
   "i18n-nav-about": {id:"Ofagro", en:"Ofagro"},
   "i18n-nav-portfolio": {id:"Portofolio", en:"Portfolio"},
   "i18n-nav-services": {id:"Layanan", en:"Services"},
+  "i18n-nav-products": {id:`Produk<svg width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`, en:`Products<svg width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
+  "i18n-sub-farm": {id:"Produk Pertanian<small>Pupuk &amp; pestisida organik</small>", en:"Farm Products<small>Organic fertilisers &amp; pesticides</small>"},
+  "i18n-sub-ebook": {id:"Ebook<small>Terbitan PT Stel Kendo Ofagro</small>", en:"Ebooks<small>Published by PT Stel Kendo Ofagro</small>"},
+
+  "i18n-products-kicker": {id:"Produk", en:"Products"},
+  "i18n-products-h2": {id:"Yang bisa Anda beli hari ini.", en:"What you can order today."},
+  "i18n-products-p": {id:"Berbeda dari kemitraan trading yang berjalan per kontrak pasokan, bagian ini berisi produk siap kirim yang bisa dipesan langsung — beserta terbitan edukasi kami.", en:"Unlike our trading partnerships, which run on supply contracts, this section holds ready-to-ship products you can order directly — along with our educational publications."},
+  "i18n-farm-h3": {id:"Produk Pertanian", en:"Farm Products"},
+  "i18n-farm-note": {id:"Pupuk &amp; pestisida organik · kirim 1–3 hari kerja", en:"Organic fertilisers &amp; pesticides · ships in 1–3 business days"},
+
+  "i18n-pr1-name": {id:"Pupuk Organik Cair", en:"Liquid Organic Fertiliser"},
+  "i18n-pr1-desc": {id:"[ISI] Bahan baku, kandungan hara, dan komoditas yang cocok.", en:"[ISI] Raw materials, nutrient content, and suitable crops."},
+  "i18n-pr2-name": {id:"Pupuk Organik Granul", en:"Granular Organic Fertiliser"},
+  "i18n-pr2-desc": {id:"[ISI] Bahan baku, kandungan C-organik, dan waktu aplikasi.", en:"[ISI] Raw materials, organic carbon content, and application timing."},
+  "i18n-pr3-name": {id:"Pestisida Nabati", en:"Botanical Pesticide"},
+  "i18n-pr3-desc": {id:"[ISI] Bahan aktif nabati, hama sasaran, dan cara aplikasi.", en:"[ISI] Plant-based active ingredients, target pests, and how to apply."},
+
+  "i18n-trust": {id:`<li>QRIS · transfer bank · e-wallet</li><li>Ongkir dihitung saat checkout</li><li>Dikirim dari [ISI kota]</li><li>Butuh saran dosis? Hubungi kami</li>`, en:`<li>QRIS · bank transfer · e-wallet</li><li>Shipping calculated at checkout</li><li>Ships from [ISI kota]</li><li>Need dosage advice? Talk to us</li>`},
+
+  "i18n-ebook-h3": {id:"Ebook", en:"Ebooks"},
+  "i18n-ebook-note": {id:"Terbitan PT Stel Kendo Ofagro", en:"Published by PT Stel Kendo Ofagro"},
+  "i18n-eb1-name": {id:"Buku Saku Edukasi Lab Sampah", en:"Waste Lab Education Pocket Book"},
+  "i18n-eb1-desc": {id:"Panduan ringkas pengelolaan dan pemilahan sampah untuk warga, pengelola lingkungan, pelaku UMKM, dan karyawan. Disusun dalam bahasa sehari-hari dan bisa langsung dipakai sebagai bahan pelatihan komunitas.", en:"A concise guide to waste handling and sorting for residents, environmental managers, small business owners, and employees. Written in plain language and ready to use as community training material."},
+  "i18n-eb1-meta": {id:`<li>PDF</li><li>Format cetak A5</li><li>Bahasa Indonesia</li><li>[ISI] halaman</li>`, en:`<li>PDF</li><li>A5 print format</li><li>Indonesian</li><li>[ISI] pages</li>`},
+  "i18n-eb1-price": {id:`Rp[ISI]<span>unduh langsung, tanpa ongkir</span>`, en:`Rp[ISI]<span>instant download, no shipping</span>`},
+  "i18n-eb1-btn": {id:"Beli &amp; unduh", en:"Buy &amp; download"},
+  "i18n-eb1-note": {id:"File dikirim otomatis ke email Anda setelah pembayaran. Judul berikutnya sedang disiapkan.", en:"The file is emailed to you automatically once payment clears. More titles are in preparation."},
+  "i18n-pr1-spec": {id:`<li><span>Netto</span> <b>[ISI]</b></li><li><span>Dosis</span> <b>[ISI]</b></li><li><span>No. pendaftaran</span> <b>[ISI]</b></li>`, en:`<li><span>Net weight</span> <b>[ISI]</b></li><li><span>Dosage</span> <b>[ISI]</b></li><li><span>Registration no.</span> <b>[ISI]</b></li>`},
+  "i18n-pr1-price": {id:`Rp[ISI]<span>belum termasuk ongkir</span>`, en:`Rp[ISI]<span>excludes shipping</span>`},
+  "i18n-pr1-btn": {id:"Beli sekarang", en:"Buy now"},
+  "i18n-pr1-whole": {id:`Pesanan grosir? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pupuk%20Organik%20Cair." target="_blank" rel="noopener">Minta harga khusus</a>`, en:`Buying in bulk? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pupuk%20Organik%20Cair." target="_blank" rel="noopener">Request wholesale pricing</a>`},
+  "i18n-pr2-spec": {id:`<li><span>Netto</span> <b>[ISI]</b></li><li><span>Dosis</span> <b>[ISI]</b></li><li><span>No. pendaftaran</span> <b>[ISI]</b></li>`, en:`<li><span>Net weight</span> <b>[ISI]</b></li><li><span>Dosage</span> <b>[ISI]</b></li><li><span>Registration no.</span> <b>[ISI]</b></li>`},
+  "i18n-pr2-price": {id:`Rp[ISI]<span>belum termasuk ongkir</span>`, en:`Rp[ISI]<span>excludes shipping</span>`},
+  "i18n-pr2-btn": {id:"Beli sekarang", en:"Buy now"},
+  "i18n-pr2-whole": {id:`Pesanan grosir? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pupuk%20Organik%20Granul." target="_blank" rel="noopener">Minta harga khusus</a>`, en:`Buying in bulk? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pupuk%20Organik%20Granul." target="_blank" rel="noopener">Request wholesale pricing</a>`},
+  "i18n-pr3-spec": {id:`<li><span>Netto</span> <b>[ISI]</b></li><li><span>Dosis</span> <b>[ISI]</b></li><li><span>No. pendaftaran</span> <b>[ISI]</b></li>`, en:`<li><span>Net weight</span> <b>[ISI]</b></li><li><span>Dosage</span> <b>[ISI]</b></li><li><span>Registration no.</span> <b>[ISI]</b></li>`},
+  "i18n-pr3-price": {id:`Rp[ISI]<span>belum termasuk ongkir</span>`, en:`Rp[ISI]<span>excludes shipping</span>`},
+  "i18n-pr3-btn": {id:"Beli sekarang", en:"Buy now"},
+  "i18n-pr3-whole": {id:`Pesanan grosir? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pestisida%20Nabati." target="_blank" rel="noopener">Minta harga khusus</a>`, en:`Buying in bulk? <a href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20menanyakan%20harga%20grosir%20Pestisida%20Nabati." target="_blank" rel="noopener">Request wholesale pricing</a>`},
   "i18n-nav-articles": {id:"Artikel", en:"Articles"},
   "i18n-nav-join": {id:"Ikut", en:"Join"},
 
@@ -1274,6 +1511,21 @@ const heroH1 = {
   id: "Mari Diskusi, <em>Greeners</em>.<br>Kamu Butuh Apa Sekarang?",
   en: "Let's Talk, <em>Greeners</em>.<br>What Do You Need Right Now?"
 };
+
+(function(){
+  var wrap = document.querySelector('.navlinks .has-sub');
+  if (!wrap) return;
+  var toggle = wrap.querySelector('.sub-toggle');
+  var close = function(){ toggle.setAttribute('aria-expanded','false'); };
+
+  toggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    toggle.setAttribute('aria-expanded', toggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+  });
+  document.addEventListener('click', function(e){ if (!wrap.contains(e.target)) close(); });
+  wrap.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ close(); toggle.focus(); } });
+  wrap.querySelectorAll('.submenu a').forEach(function(a){ a.addEventListener('click', close); });
+})();
 
 function setLang(lang){
   document.documentElement.lang = lang;
