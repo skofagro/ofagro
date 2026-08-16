@@ -208,6 +208,27 @@
   @media (max-width: 1100px){ .services-grid{ grid-template-columns: repeat(2,1fr); } }
   @media (max-width: 860px){ .services-grid{ grid-template-columns:1fr; } }
 
+  /* ---------- ALAT (TOOLS) ---------- */
+  .alat{ background: var(--bg-alt); }
+  .tools-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:20px; margin-top: 44px; }
+  .tool-card{
+    background: var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding: 30px 26px; display:flex; flex-direction:column;
+    transition: border-color 0.18s ease;
+  }
+  .tool-card:hover, .tool-card:focus-within{ border-color: var(--gold); }
+  .tool-icon{
+    width:44px; height:44px; border-radius:8px;
+    background: rgba(147,122,62,0.16);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--gold-soft); margin-bottom:20px;
+  }
+  .tool-tag{ font-family:'JetBrains Mono',monospace; font-size:0.7rem; color: var(--green); text-transform:uppercase; letter-spacing:0.06em; }
+  .tool-card h3{ font-size:1.25rem; margin: 10px 0 10px; color: var(--cream); }
+  .tool-desc{ color: var(--muted); font-size:0.92rem; flex-grow:1; margin-bottom:24px; }
+  .tool-card .btn{ justify-content:center; }
+  @media (max-width: 760px){ .tools-grid{ grid-template-columns:1fr; } }
+
   /* ---------- PROCESS (real sequence -> numbering justified) ---------- */
   .process{ background: var(--bg-alt); }
   .steps{ margin-top: 48px; display:grid; grid-template-columns: repeat(4,1fr); gap:0; }
@@ -471,7 +492,7 @@
       <a href="#portofolio" id="i18n-nav-portfolio">Portofolio</a>
       <a href="produk.html" id="i18n-nav-products">Produk</a>
       <a href="#layanan" id="i18n-nav-services">Layanan</a>
-      <a class="nav-tool-link" href="ukur-lahan.html" id="i18n-nav-ukur"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Ukur Lahan<span class="nav-badge">Baru</span></a>
+      <a class="nav-tool-link" href="#alat" id="i18n-nav-alat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Alat<span class="nav-badge">Baru</span></a>
       <a href="#artikel" id="i18n-nav-articles">Artikel</a>
       <a href="#booking" id="i18n-nav-join">Ikut</a>
     </div>
@@ -689,6 +710,36 @@
           <li id="i18n-s4-li4">Pendampingan skema serapan karbon</li>
         </ul>
         <a class="btn btn-ghost" href="https://wa.me/6281220099730?text=Halo%20OFAGRO%2C%20saya%20ingin%20konsultasi%20layanan%20reboisasi" target="_blank" rel="noopener" id="i18n-s4-btn">Konsultasi Reboisasi</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alat" id="alat">
+  <div class="wrap">
+    <span class="kicker" id="i18n-alat-kicker">Alat</span>
+    <div class="section-head">
+      <h2 id="i18n-alat-h2">Alat bantu praktis untuk kerja di lapangan.</h2>
+      <p id="i18n-alat-p">Dipakai langsung dari HP, tanpa perlu install apa pun — cocok dipakai saat sedang di lahan.</p>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="tool-tag" id="i18n-alat-t1-tag">Pengukuran Lahan</span>
+        <h3 id="i18n-alat-t1-h3">Ukur Lahan</h3>
+        <p class="tool-desc" id="i18n-alat-t1-p">Ukur luas &amp; keliling lahan langsung dari HP — tap-tap di peta satelit, atau jalan kaki mengelilingi lahan pakai GPS.</p>
+        <a class="btn btn-primary" href="ukur-lahan.html" id="i18n-alat-t1-btn">Buka Ukur Lahan →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <span class="tool-tag" id="i18n-alat-t2-tag">Perencanaan Tanam</span>
+        <h3 id="i18n-alat-t2-h3">Kalkulator Kebutuhan Benih</h3>
+        <p class="tool-desc" id="i18n-alat-t2-p">Hitung estimasi kebutuhan benih berdasarkan luas lahan &amp; jenis komoditas — padi, jagung, cabai, dan lainnya.</p>
+        <a class="btn btn-primary" href="kalkulator-benih.html" id="i18n-alat-t2-btn">Buka Kalkulator →</a>
       </div>
     </div>
   </div>
@@ -1294,7 +1345,19 @@ const translations = {
   "i18n-nav-about": {id:"Ofagro", en:"Ofagro"},
   "i18n-nav-portfolio": {id:"Portofolio", en:"Portfolio"},
   "i18n-nav-services": {id:"Layanan", en:"Services"},
-  "i18n-nav-ukur": {id:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Ukur Lahan<span class="nav-badge">Baru</span>`, en:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Measure Land<span class="nav-badge">New</span>`},
+  "i18n-nav-alat": {id:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Alat<span class="nav-badge">Baru</span>`, en:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Tools<span class="nav-badge">New</span>`},
+
+  "i18n-alat-kicker": {id:"Alat", en:"Tools"},
+  "i18n-alat-h2": {id:"Alat bantu praktis untuk kerja di lapangan.", en:"Practical tools for field work."},
+  "i18n-alat-p": {id:"Dipakai langsung dari HP, tanpa perlu install apa pun — cocok dipakai saat sedang di lahan.", en:"Use it straight from your phone, no install needed — handy while you're out in the field."},
+  "i18n-alat-t1-tag": {id:"Pengukuran Lahan", en:"Land Measurement"},
+  "i18n-alat-t1-h3": {id:"Ukur Lahan", en:"Measure Land"},
+  "i18n-alat-t1-p": {id:"Ukur luas &amp; keliling lahan langsung dari HP — tap-tap di peta satelit, atau jalan kaki mengelilingi lahan pakai GPS.", en:"Measure land area &amp; perimeter straight from your phone — tap on satellite maps, or walk the boundary using GPS."},
+  "i18n-alat-t1-btn": {id:"Buka Ukur Lahan →", en:"Open Measure Land →"},
+  "i18n-alat-t2-tag": {id:"Perencanaan Tanam", en:"Planting Planner"},
+  "i18n-alat-t2-h3": {id:"Kalkulator Kebutuhan Benih", en:"Seed Requirement Calculator"},
+  "i18n-alat-t2-p": {id:"Hitung estimasi kebutuhan benih berdasarkan luas lahan &amp; jenis komoditas — padi, jagung, cabai, dan lainnya.", en:"Estimate seed requirements based on land area &amp; crop type — rice, corn, chili, and more."},
+  "i18n-alat-t2-btn": {id:"Buka Kalkulator →", en:"Open Calculator →"},
   "i18n-nav-products": {id:"Produk", en:"Products"},
 
   "i18n-services-kicker": {id:"Layanan", en:"Services"},
