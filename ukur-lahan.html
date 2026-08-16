@@ -250,7 +250,7 @@
   <div class="page-head">
     <span class="eyebrow">OFAGRO &middot; Alat Lapangan</span>
     <h1>Ukur Lahan</h1>
-    <p>Ukur luas lahan pakai citra satelit atau berjalan kaki dengan GPS HP. Cocok untuk estimasi lapangan &amp; catatan internal &mdash; bukan pengganti pengukuran resmi BPN.</p>
+    <p>Ukur luas lahan pakai citra satelit atau berjalan kaki dengan GPS HP. Cocok untuk estimasi lapangan &amp; catatan internal &mdash; bukan pengganti pengukuran resmi BPN. Data tersimpan di HP/browser masing-masing.</p>
   </div>
 
   <nav class="tabs">
@@ -641,25 +641,24 @@
     }
   });
 
-  const STORAGE_KEY = 'lahan-list';
+  const STORAGE_KEY = 'ofagro-ukur-lahan-list';
   let lands = [];
 
-  async function loadLands(){
+  function loadLands(){
     try{
-      const res = await window.storage.get(STORAGE_KEY, false);
-      lands = res && res.value ? JSON.parse(res.value) : [];
+      const raw = localStorage.getItem(STORAGE_KEY);
+      lands = raw ? JSON.parse(raw) : [];
     }catch(e){
       lands = [];
     }
     renderList();
   }
 
-  async function persistLands(){
+  function persistLands(){
     try{
-      const res = await window.storage.set(STORAGE_KEY, JSON.stringify(lands), false);
-      if(!res){ toast('Data tersimpan sementara di sesi ini saja (penyimpanan gagal).'); }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(lands));
     }catch(e){
-      toast('Data tersimpan sementara di sesi ini saja (penyimpanan gagal).');
+      toast('Penyimpanan penuh/tidak tersedia di HP ini. Coba hapus lahan lama atau bersihkan penyimpanan browser.');
     }
   }
 
