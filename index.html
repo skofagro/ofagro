@@ -75,10 +75,32 @@
   .lang-toggle .lang-active{ color: var(--cream); font-weight:600; }
   .lang-toggle .lang-inactive{ color: var(--muted); }
   .lang-toggle .lang-divider{ color: var(--line); }
-  .nav-toggle{ display:none; background:none; border:none; color:var(--cream); font-size:1.4rem; cursor:pointer; }
+  .nav-toggle{ display:none; background:none; border:none; color:var(--cream); font-size:1.4rem; cursor:pointer; padding:4px; }
+  .nav-tool-link{ display:inline-flex; align-items:center; gap:6px; }
+  .nav-tool-link svg{ color: var(--gold-soft); flex-shrink:0; }
+  .nav-badge{
+    font-family:'JetBrains Mono', monospace; font-size:0.62rem; font-weight:600;
+    letter-spacing:0.04em; text-transform:uppercase; color:#14170f;
+    background: var(--gold-soft); border-radius:999px; padding:2px 7px; line-height:1.5;
+  }
 
   @media (max-width: 760px){
-    .navlinks{ display:none; }
+    .navlinks{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; gap:2px;
+      background: var(--bg); border-bottom:1px solid var(--line);
+      padding:10px 24px 18px;
+    }
+    .navlinks.mobile-open{ display:flex; }
+    .navlinks a, .navlinks .sub-toggle{ padding:11px 4px; border-bottom:1px solid var(--line); }
+    .navlinks .has-sub{ display:flex; flex-direction:column; }
+    .navlinks .submenu{
+      position:static; display:none; box-shadow:none; border:none; background:none;
+      padding:0 0 6px 14px; min-width:0;
+    }
+    .navlinks .sub-toggle[aria-expanded="true"] + .submenu{ display:block; }
+    .navlinks .submenu a{ border-bottom:none; padding:9px 4px; }
     .nav-toggle{ display:block; }
   }
 
@@ -456,6 +478,7 @@
         </ul>
       </div>
       <a href="#layanan" id="i18n-nav-services">Layanan</a>
+      <a class="nav-tool-link" href="ukur-lahan.html" id="i18n-nav-ukur"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Ukur Lahan<span class="nav-badge">Baru</span></a>
       <a href="#artikel" id="i18n-nav-articles">Artikel</a>
       <a href="#booking" id="i18n-nav-join">Ikut</a>
     </div>
@@ -464,6 +487,9 @@
       <span class="lang-divider">/</span>
       <span class="lang-inactive" id="lang-btn-en" onclick="setLang('en')">🇬🇧 EN</span>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false" aria-controls="navlinksMobile">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path id="navToggleIconOpen" d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
   </nav>
 </header>
 
@@ -1419,6 +1445,7 @@ const translations = {
   "i18n-nav-about": {id:"Ofagro", en:"Ofagro"},
   "i18n-nav-portfolio": {id:"Portofolio", en:"Portfolio"},
   "i18n-nav-services": {id:"Layanan", en:"Services"},
+  "i18n-nav-ukur": {id:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Ukur Lahan<span class="nav-badge">Baru</span>`, en:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Measure Land<span class="nav-badge">New</span>`},
   "i18n-nav-products": {id:`Produk<svg width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`, en:`Products<svg width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
   "i18n-sub-farm": {id:"Produk Pertanian<small>Pupuk &amp; pestisida organik</small>", en:"Farm Products<small>Organic fertilisers &amp; pesticides</small>"},
   "i18n-sub-cf": {id:"Contract Farming<small>Input khusus mitra kontrak</small>", en:"Contract Farming<small>Inputs for contracted partners</small>"},
@@ -1644,6 +1671,33 @@ const heroH1 = {
   document.addEventListener('click', function(e){ if (!wrap.contains(e.target)) close(); });
   wrap.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ close(); toggle.focus(); } });
   wrap.querySelectorAll('.submenu a').forEach(function(a){ a.addEventListener('click', close); });
+})();
+
+(function(){
+  var navToggle = document.getElementById('navToggle');
+  var navlinks = document.querySelector('.navlinks');
+  if (!navToggle || !navlinks) return;
+  var iconOpen = 'M3 6h18M3 12h18M3 18h18';
+  var iconClose = 'M5 5l14 14M19 5L5 19';
+  var path = navToggle.querySelector('path');
+
+  var setOpen = function(open){
+    navlinks.classList.toggle('mobile-open', open);
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (path) path.setAttribute('d', open ? iconClose : iconOpen);
+  };
+
+  navToggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    setOpen(!navlinks.classList.contains('mobile-open'));
+  });
+  navlinks.querySelectorAll('a:not(.sub-toggle)').forEach(function(a){
+    a.addEventListener('click', function(){ setOpen(false); });
+  });
+  document.addEventListener('click', function(e){
+    if (!navlinks.contains(e.target) && e.target !== navToggle && !navToggle.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') setOpen(false); });
 })();
 
 function setLang(lang){
