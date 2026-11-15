@@ -208,26 +208,26 @@
   @media (max-width: 1100px){ .services-grid{ grid-template-columns: repeat(2,1fr); } }
   @media (max-width: 860px){ .services-grid{ grid-template-columns:1fr; } }
 
-  /* ---------- ALAT (TOOLS) ---------- */
-  .alat{ background: var(--bg-alt); }
-  .tools-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:20px; margin-top: 44px; }
-  .tool-card{
-    background: var(--panel); border:1px solid var(--line); border-radius:6px;
-    padding: 30px 26px; display:flex; flex-direction:column;
-    transition: border-color 0.18s ease;
+  /* ---------- BUDIDAYA (catatan singkat di beranda) ---------- */
+  .budidaya{ background: var(--bg-alt); }
+  .bd-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:40px; }
+  .bd-card{
+    display:flex; align-items:center; gap:18px; background: var(--panel); border:1px solid var(--line);
+    border-radius:6px; padding:22px 24px; transition: border-color 0.18s ease, transform 0.18s ease;
   }
-  .tool-card:hover, .tool-card:focus-within{ border-color: var(--gold); }
-  .tool-icon{
-    width:44px; height:44px; border-radius:8px;
-    background: rgba(147,122,62,0.16);
-    display:flex; align-items:center; justify-content:center;
-    color: var(--gold-soft); margin-bottom:20px;
+  a.bd-card:hover, a.bd-card:focus-visible{ border-color: var(--gold); transform: translateY(-2px); }
+  .bd-card > div{ flex:1; min-width:0; }
+  .bd-card.soon{ border-style:dashed; opacity:0.8; }
+  .bd-ikon{ font-size:1.9rem; flex-shrink:0; }
+  .bd-card h3{ font-size:1.2rem; color: var(--cream); margin-bottom:4px; }
+  .bd-card p{ color: var(--muted); font-size:0.88rem; line-height:1.5; }
+  .bd-card .btn{ flex-shrink:0; padding:10px 18px; }
+  .bd-soon{ font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color: var(--gold-soft); flex-shrink:0; }
+  @media (max-width: 760px){
+    .bd-grid{ grid-template-columns:1fr; }
+    .bd-card{ flex-wrap:wrap; padding:18px; }
+    .bd-card .btn{ width:100%; justify-content:center; }
   }
-  .tool-tag{ font-family:'JetBrains Mono',monospace; font-size:0.7rem; color: var(--green); text-transform:uppercase; letter-spacing:0.06em; }
-  .tool-card h3{ font-size:1.25rem; margin: 10px 0 10px; color: var(--cream); }
-  .tool-desc{ color: var(--muted); font-size:0.92rem; flex-grow:1; margin-bottom:24px; }
-  .tool-card .btn{ justify-content:center; }
-  @media (max-width: 760px){ .tools-grid{ grid-template-columns:1fr; } }
 
   /* ---------- PROCESS (real sequence -> numbering justified) ---------- */
   .process{ background: var(--bg-alt); }
@@ -492,7 +492,7 @@
       <a href="#portofolio" id="i18n-nav-portfolio">Portofolio</a>
       <a href="produk.html" id="i18n-nav-products">Produk</a>
       <a href="#layanan" id="i18n-nav-services">Layanan</a>
-      <a class="nav-tool-link" href="#alat" id="i18n-nav-alat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Alat<span class="nav-badge">Baru</span></a>
+      <a class="nav-tool-link" href="budidaya.html" id="i18n-nav-alat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Budidaya<span class="nav-badge">Baru</span></a>
       <a href="#artikel" id="i18n-nav-articles">Artikel</a>
       <a href="#booking" id="i18n-nav-join">Ikut</a>
     </div>
@@ -715,31 +715,29 @@
   </div>
 </section>
 
-<section class="alat" id="alat">
+<section class="budidaya" id="budidaya">
   <div class="wrap">
-    <span class="kicker" id="i18n-alat-kicker">Alat</span>
+    <span class="kicker" id="i18n-bd-kicker">Budidaya</span>
     <div class="section-head">
-      <h2 id="i18n-alat-h2">Alat bantu praktis untuk kerja di lapangan.</h2>
-      <p id="i18n-alat-p">Dipakai langsung dari HP, tanpa perlu install apa pun — cocok dipakai saat sedang di lahan.</p>
+      <h2 id="i18n-bd-h2">Hitung kebutuhan budidaya, dari ukur lahan sampai jadi beras.</h2>
+      <p id="i18n-bd-p">Dipakai langsung dari HP, tanpa install. Kami mulai dari dua komoditas supaya hitungannya rinci.</p>
     </div>
-    <div class="tools-grid">
-      <div class="tool-card">
-        <div class="tool-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="bd-grid">
+      <a class="bd-card" href="budidaya-padi.html">
+        <span class="bd-ikon" aria-hidden="true">🌾</span>
+        <div>
+          <h3 id="i18n-bd-padi-h3">Budidaya Padi</h3>
+          <p id="i18n-bd-padi-p">Ukur lahan, benih, pestisida, pupuk, pembenah tanah, estimasi hasil, rendemen.</p>
         </div>
-        <span class="tool-tag" id="i18n-alat-t1-tag">Pengukuran Lahan</span>
-        <h3 id="i18n-alat-t1-h3">Ukur Lahan</h3>
-        <p class="tool-desc" id="i18n-alat-t1-p">Ukur luas &amp; keliling lahan langsung dari HP — tap-tap di peta satelit, atau jalan kaki mengelilingi lahan pakai GPS.</p>
-        <a class="btn btn-primary" href="ukur-lahan.html" id="i18n-alat-t1-btn">Buka Ukur Lahan →</a>
-      </div>
-      <div class="tool-card">
-        <div class="tool-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="btn btn-primary" id="i18n-bd-padi-btn">Buka →</span>
+      </a>
+      <div class="bd-card soon">
+        <span class="bd-ikon" aria-hidden="true">🌽</span>
+        <div>
+          <h3 id="i18n-bd-jagung-h3">Budidaya Jagung</h3>
+          <p id="i18n-bd-jagung-p">Sedang disiapkan dengan susunan yang sama.</p>
         </div>
-        <span class="tool-tag" id="i18n-alat-t2-tag">Perencanaan Tanam</span>
-        <h3 id="i18n-alat-t2-h3">Kalkulator Kebutuhan Benih</h3>
-        <p class="tool-desc" id="i18n-alat-t2-p">Hitung estimasi kebutuhan benih berdasarkan luas lahan &amp; jenis komoditas — padi, jagung, cabai, dan lainnya.</p>
-        <a class="btn btn-primary" href="kalkulator-benih.html" id="i18n-alat-t2-btn">Buka Kalkulator →</a>
+        <span class="bd-soon" id="i18n-bd-jagung-tag">Segera</span>
       </div>
     </div>
   </div>
@@ -1345,19 +1343,17 @@ const translations = {
   "i18n-nav-about": {id:"Ofagro", en:"Ofagro"},
   "i18n-nav-portfolio": {id:"Portofolio", en:"Portfolio"},
   "i18n-nav-services": {id:"Layanan", en:"Services"},
-  "i18n-nav-alat": {id:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Alat<span class="nav-badge">Baru</span>`, en:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Tools<span class="nav-badge">New</span>`},
+  "i18n-nav-alat": {id:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Budidaya<span class="nav-badge">Baru</span>`, en:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-4-1-7-4-7-9a7 7 0 0 1 14 0c0 5-3 8-7 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Cultivation<span class="nav-badge">New</span>`},
 
-  "i18n-alat-kicker": {id:"Alat", en:"Tools"},
-  "i18n-alat-h2": {id:"Alat bantu praktis untuk kerja di lapangan.", en:"Practical tools for field work."},
-  "i18n-alat-p": {id:"Dipakai langsung dari HP, tanpa perlu install apa pun — cocok dipakai saat sedang di lahan.", en:"Use it straight from your phone, no install needed — handy while you're out in the field."},
-  "i18n-alat-t1-tag": {id:"Pengukuran Lahan", en:"Land Measurement"},
-  "i18n-alat-t1-h3": {id:"Ukur Lahan", en:"Measure Land"},
-  "i18n-alat-t1-p": {id:"Ukur luas &amp; keliling lahan langsung dari HP — tap-tap di peta satelit, atau jalan kaki mengelilingi lahan pakai GPS.", en:"Measure land area &amp; perimeter straight from your phone — tap on satellite maps, or walk the boundary using GPS."},
-  "i18n-alat-t1-btn": {id:"Buka Ukur Lahan →", en:"Open Measure Land →"},
-  "i18n-alat-t2-tag": {id:"Perencanaan Tanam", en:"Planting Planner"},
-  "i18n-alat-t2-h3": {id:"Kalkulator Kebutuhan Benih", en:"Seed Requirement Calculator"},
-  "i18n-alat-t2-p": {id:"Hitung estimasi kebutuhan benih berdasarkan luas lahan &amp; jenis komoditas — padi, jagung, cabai, dan lainnya.", en:"Estimate seed requirements based on land area &amp; crop type — rice, corn, chili, and more."},
-  "i18n-alat-t2-btn": {id:"Buka Kalkulator →", en:"Open Calculator →"},
+  "i18n-bd-kicker": {id:"Budidaya", en:"Cultivation"},
+  "i18n-bd-h2": {id:"Hitung kebutuhan budidaya, dari ukur lahan sampai jadi beras.", en:"Work out what your crop needs, from measuring the field to milled rice."},
+  "i18n-bd-p": {id:"Dipakai langsung dari HP, tanpa install. Kami mulai dari dua komoditas supaya hitungannya rinci.", en:"Use it straight from your phone, no install. We start with two crops so the calculations stay detailed."},
+  "i18n-bd-padi-h3": {id:"Budidaya Padi", en:"Rice Cultivation"},
+  "i18n-bd-padi-p": {id:"Ukur lahan, benih, pestisida, pupuk, pembenah tanah, estimasi hasil, rendemen.", en:"Field measurement, seed, pesticides, fertilizer, soil amendments, yield estimate, milling recovery."},
+  "i18n-bd-padi-btn": {id:"Buka →", en:"Open →"},
+  "i18n-bd-jagung-h3": {id:"Budidaya Jagung", en:"Corn Cultivation"},
+  "i18n-bd-jagung-p": {id:"Sedang disiapkan dengan susunan yang sama.", en:"Being prepared with the same structure."},
+  "i18n-bd-jagung-tag": {id:"Segera", en:"Soon"},
   "i18n-nav-products": {id:"Produk", en:"Products"},
 
   "i18n-services-kicker": {id:"Layanan", en:"Services"},
