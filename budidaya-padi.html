@@ -326,6 +326,12 @@
   .poc-item{ border:1px solid var(--line); border-radius:4px; padding:12px 14px; margin-top:10px; background:var(--bg); }
   .poc-item .grid2{ margin-top:10px; }
   .ctx.profil .help{ display:block; font-size:0.72rem; color:var(--muted); margin-top:5px; line-height:1.4; }
+
+  /* glosarium bahan aktif */
+  details.glos{ margin-top:26px; border-top:1px solid var(--line); padding-top:16px; }
+  details.glos summary{ cursor:pointer; font-weight:600; color:var(--gold-soft); font-size:0.95rem; }
+  details.glos .tbl td{ vertical-align:top; font-size:0.82rem; }
+  .poc-item .grid3{ margin-top:10px; }
 </style>
 </head>
 <body>
@@ -349,7 +355,7 @@
   <!-- Profil tanam: dipakai oleh semua modul -->
   <div class="ctx profil" aria-label="Profil tanam">
     <div class="fld eko"><label class="field-label" for="pfEko">Jenis lahan</label><select class="inp" id="pfEko"></select><span class="help">Menentukan varietas, takaran pupuk, dan cara tanam yang cocok.</span></div>
-    <div class="fld wide"><label class="field-label" for="pfSistem">Sistem tanam</label><select class="inp" id="pfSistem"></select><span class="help">Jarak tanam menentukan jumlah rumpun dan kebutuhan benih. Legowo: jarak antarbaris × dalam baris × lorong.</span></div>
+    <div class="fld wide"><label class="field-label" for="pfSistem">Sistem tanam</label><select class="inp" id="pfSistem"></select><span class="help" id="pfSistemKet"></span></div>
     <div class="fld"><label class="field-label" for="pfMusim">Musim</label><select class="inp" id="pfMusim"></select><span class="help">Musim kemarau lebih aman dengan varietas genjah.</span></div>
     <div class="fld"><label class="field-label" for="pfAir">Kondisi air</label><select class="inp" id="pfAir"></select><span class="help">Air terbatas atau sering tergenang menambah bibit per lubang.</span></div>
     <div class="fld"><label class="field-label" for="pfTanam">Tanggal tanam</label><input class="inp" type="date" id="pfTanam"><span class="help">Dipakai untuk menyusun jadwal pemeliharaan sampai panen.</span></div>
@@ -486,16 +492,25 @@ LP.CROP = {
     {id:'rawa',    label:'Rawa lebak / pasang surut'}
   ],
   /* pindah:true = lewat persemaian. rumpunM2 dihitung dari jarak tanam. */
+  /* rumpunM2 = populasi kotor (sebelum dikurangi saluran). ubin = ukuran ubinan anjuran (m) untuk sistem itu. */
   sistem: [
-    {id:'tegel',    label:'Tanam pindah tegel 25 × 25 cm', rumpunM2:16, pindah:true, bibit:3},
-    {id:'tegel20',  label:'Tanam pindah tegel 20 × 20 cm', rumpunM2:25, pindah:true, bibit:3},
-    {id:'legowo21', label:'Jajar legowo 2:1 (25 × 12,5 × 50 cm)', rumpunM2:21.33, pindah:true, bibit:3},
-    {id:'legowo21b', label:'Jajar legowo 2:1 (30 × 12,5 × 50 cm)', rumpunM2:20, pindah:true, bibit:3},
-    {id:'legowo41', label:'Jajar legowo 4:1 (25 × 12,5 × 50 cm)', rumpunM2:25.6, pindah:true, bibit:3},
-    {id:'legowo41b', label:'Jajar legowo 4:1 (30 × 12,5 × 50 cm)', rumpunM2:22.86, pindah:true, bibit:3},
-    {id:'tabelaLarik', label:'Tabela larikan', pindah:false, kgHa:40},
-    {id:'tabelaSebar', label:'Tabela sebar rata', pindah:false, kgHa:60},
-    {id:'tugal',    label:'Tugal 30 × 15 cm (gogo)', rumpunM2:22.22, pindah:false, bibit:5}
+    {id:'tegel',    label:'Tanam pindah tegel 25 × 25 cm', rumpunM2:16, pindah:true, bibit:3, ubin:[2.5,2.5], ubinKet:'Baku BPS 2,5 × 2,5 m berisi 100 rumpun.'},
+    {id:'tegel20',  label:'Tanam pindah tegel 20 × 20 cm', rumpunM2:25, pindah:true, bibit:3, ubin:[2,2], ubinKet:'Ubinan 2 × 2 m berisi 100 rumpun.'},
+    {id:'legowo21', label:'Jajar legowo 2:1 (25 × 12,5 × 50 cm)', rumpunM2:21.3333, pindah:true, bibit:3, ubin:[1.5,1.5], ubinKet:'Dua set legowo 1,5 × 1,5 m berisi 48 rumpun.'},
+    {id:'legowo41', label:'Jajar legowo 4:1 (25 × 12,5 × 50 cm)', rumpunM2:25.6, pindah:true, bibit:3, ubin:[2.5,2.5], ubinKet:'Dua set legowo 2,5 × 2,5 m berisi 160 rumpun.'},
+    {id:'tabelaLarik', label:'Tabela larikan (jarak larikan 25 cm)', pindah:false, kgHa:40, jarakBaris:25, tumbuh:60, ubin:[2.5,2.5], ubinKet:'Tabela tidak berumpun; pakai ubinan 2,5 × 2,5 m (10 larikan sepanjang 2,5 m).',
+     ket:'Benih ditabur menerus dalam larikan berjarak 25 cm (umumnya 20–25 cm), dengan alat tabela atau ditarik caplak.'},
+    {id:'tabelaSebar', label:'Tabela sebar rata (tanpa jarak tanam)', pindah:false, kgHa:60, tumbuh:50, ubin:[2.5,2.5], ubinKet:'Tabela tidak berumpun; pakai ubinan 2,5 × 2,5 m.',
+     ket:'Benih disebar merata di seluruh petakan, tanpa jarak tanam.'},
+    {id:'tugal',    label:'Tugal 30 × 15 cm (gogo)', rumpunM2:22.2222, pindah:false, bibit:5, ubin:[2.4,2.4], ubinKet:'Ubinan 2,4 × 2,4 m berisi 128 lubang.'}
+  ],
+  /* Saluran keliling (caren) memotong luas tanam. Lebar 0,5 m di sekeliling petakan; lahan kering tanpa saluran. */
+  saluran: { lebarM:0.5, maks:15, tanpa:['gogo'] },
+  /* Kehilangan hasil saat panen dan perontokan (% dari hasil ubinan) */
+  caraPanen: [
+    {id:'combine', label:'Combine harvester', hilang:3, ket:'Potong dan rontok sekaligus; kehilangan paling kecil.'},
+    {id:'thresher', label:'Sabit lalu power thresher', hilang:8, ket:'Kehilangan panen dengan sabit 3–8%, ditambah tercecer saat perontokan.'},
+    {id:'gebot', label:'Sabit lalu gebot', hilang:14, ket:'Survei susut BPS: sekitar 9,5% saat panen dan 4,8% saat perontokan.'}
   ],
   musim: [{id:'mh', label:'Musim hujan (MH)'}, {id:'mk', label:'Musim kemarau (MK)'}],
 
@@ -624,6 +639,11 @@ LP.CROP = {
       rawa: {urea:200, sp36:100, kcl:100, ket:'Anjuran umum lahan pasang surut; tidak mengikuti status hara.'}
     },
     majemuk: {nama:'NPK 15-10-12', n:15, p:10, k:12},
+    /* pilihan produk; produk OFAGRO memakai takaran yang sama dengan padanannya */
+    produkNpk: [['subsidi','NPK Phonska 15-10-12 (subsidi)','NPK 15-10-12'],['ofagro','OFAGRO Mineral+NPK (takaran sama)','OFAGRO Mineral+NPK']],
+    produkP:   [['sp36','SP-36 (nonsubsidi)','SP-36'],['ofagro','OFAGRO Organik+SP36 (takaran sama)','OFAGRO Organik+SP36']],
+    npkKali:   [['1','Sekali, semua sebagai pupuk dasar (0–14 HST)'],['2','Dua kali: separuh dasar, separuh 21–28 HST']],
+    za: {n:21, s:24},
     jadwal: [
       {waktu:'0–14 HST (dasar)', h0:0, h1:14, urea:1/3, sp36:1, kcl:0.5, npk:1},
       {waktu:'21–28 HST (anakan aktif)', h0:21, h1:28, urea:1/3, sp36:0, kcl:0, npk:0},
@@ -656,6 +676,7 @@ LP.CROP = {
   /* 5 t jerami setara 2 t pupuk organik (Permentan 40/2007) → 1 t jerami = 0,4 t pupuk organik.
      hasilLalu, rasioJerami, dan persen 'tinggal' adalah angka perkiraan yang bisa diubah di form. */
   organik: { padatTHa:2, maxTHa:5, jeramiTHa:5, hasilLalu:6, rasioJerami:1.0,
+    produkPadat: [['umum','Kompos atau pupuk kandang','Pupuk organik padat'],['ofagro','OFAGRO Pupuk Organik Padat Plus (takaran sama)','OFAGRO Pupuk Organik Padat Plus']],
     panenLalu: [
       {id:'combine', label:'Combine harvester (tunggul tinggi, jerami tersebar)', tinggal:75, ket:'Setengah bagian bawah batang tertinggal sebagai tunggul, dan sekitar separuh jerami cacahan tersebar di petakan.'},
       {id:'kembali', label:'Semua jerami dikembalikan ke petakan', tinggal:100, ket:'Tunggul dan seluruh jerami dibenamkan.'},
@@ -665,13 +686,13 @@ LP.CROP = {
     ] },
   /* POC menurut peruntukan. h = hari setelah tanam tiap aplikasi (negatif = sebelum tanam). */
   poc: [
-    {id:'dekomposer', label:'Dekomposer / pembenah tanah', kons:10, kali:1, pakai:true, st:'acuan', h:[-21,-14], sasaran:'tanah',
+    {id:'dekomposer', label:'Dekomposer / biang mikroba (seperti EM4)', ofagro:'OFAGRO Biang Mikroba', kons:10, kali:1, pakai:true, st:'acuan', h:[-21,-14], sasaran:'tanah',
      ket:'Acuan 10 ml per liter air. Semprot merata ke tunggul dan jerami setelah panen atau saat olah tanah pertama, lalu benamkan.'},
-    {id:'humat', label:'Asam humat', kons:3, kali:2, pakai:false, st:'label', h:[-14,10], sasaran:'tanah',
+    {id:'humat', label:'Asam humat', ofagro:'OFAGRO Asam Humat', kons:3, kali:2, pakai:false, st:'label', h:[-14,10], sasaran:'tanah',
      ket:'Disiram atau disemprot ke tanah saat olah tanah dan awal pertumbuhan. Angka awal sementara; ikuti label produk.'},
-    {id:'amino', label:'Asam amino', kons:2, kali:3, pakai:false, st:'label', h:[14,28,42], sasaran:'daun',
+    {id:'amino', label:'Asam amino', ofagro:'OFAGRO Asam Amino', kons:2, kali:3, pakai:false, st:'label', h:[14,28,42], sasaran:'daun',
      ket:'Disemprot ke daun pada fase anakan sampai primordia, terutama setelah tanaman tertekan. Angka awal sementara; ikuti label produk.'},
-    {id:'nutrisi', label:'POC nutrisi umum', kons:3, kali:4, pakai:true, st:'label', h:[14,28,42,56], sasaran:'daun',
+    {id:'nutrisi', label:'POC nutrisi umum', ofagro:'OFAGRO POC', kons:3, kali:4, pakai:true, st:'label', h:[14,28,42,56], sasaran:'daun',
      ket:'Disemprot ke daun tiap dua minggu sejak 14 HST. Ikuti label produk.'}
   ],
 
@@ -679,14 +700,14 @@ LP.CROP = {
   kcAir: { kc:[{fase:'Awal', kc:1.05, hari:30},{fase:'Tengah', kc:1.20, hari:60},{fase:'Akhir', kc:0.90, hari:30}] },
 
   /* ---------- Panen dan rendemen ---------- */
-  panen: { kaStandar:14, gkpKeGkg:83.38, gkgKeBeras:64.02, ubinP:2.5, ubinL:2.5, sekam:22, dedak:10 }
+  panen: { kaStandar:14, gkpKeGkg:83.38, gkgKeBeras:64.02, ubinP:2.5, ubinL:2.5, sekam:22, dedak:10, menir:2, biayaGiling:700, kaGilingMin:13, kaGilingMaks:14 }
 };
 
 /* =====================================================================
    OPT PADI — hama, penyakit, gulma
    dosis = produk per hektare (L atau kg). tipe 'semprot' | 'tabur' | 'umpan'
    ===================================================================== */
-LP.FASE = [['semai','Persemaian'],['vegetatif','Vegetatif (anakan)'],['generatif','Generatif (bunting sampai berbunga)'],['pemasakan','Pemasakan']];
+LP.FASE = [['olah','Olah tanah sampai tanam'],['semai','Persemaian'],['vegetatif','Vegetatif (anakan)'],['generatif','Generatif (bunting sampai berbunga)'],['pemasakan','Pemasakan']];
 LP.GEJALA = [
   ['g-hopper','Rumpun menguning lalu kering seperti terbakar, mulai dari satu titik dan melebar'],
   ['g-pangkal','Serangga kecil cokelat bergerombol di pangkal batang'],
@@ -703,7 +724,20 @@ LP.GEJALA = [
   ['g-kresek','Bibit layu menggulung berwarna hijau keabu-abuan pada 1–3 minggu setelah tanam'],
   ['g-pelepah','Bercak oval kelabu bertepi cokelat pada pelepah dekat permukaan air'],
   ['g-wijen','Bercak cokelat oval sebesar biji wijen pada daun dan gabah'],
-  ['g-gulma','Rumput, teki, atau gulma daun lebar bersaing dengan padi']
+  ['g-gundul','Daun habis dimakan tinggal tulang daun, serangan pada malam hari'],
+  ['g-bawang','Anakan berubah menjadi pipa pucat seperti daun bawang dan tidak bermalai'],
+  ['g-kepinding','Serangga hitam bergerombol di pangkal batang, rumpun kerdil dan menguning'],
+  ['g-akar','Bibit muda mati dan akarnya terpotong, pada tanah yang tidak tergenang'],
+  ['g-patuk','Bulir hilang atau hampa bekas dipatuk, banyak burung saat bulir masak susu'],
+  ['g-rumput','Tanaman kerdil dengan anakan sangat banyak seperti rumput, atau daun terpuntir dan tepinya bergerigi'],
+  ['g-rebah','Pangkal batang busuk kehitaman dan tanaman mudah rebah menjelang panen'],
+  ['g-gosong','Bulir berubah menjadi bola bertepung berwarna kuning-jingga lalu hijau kehitaman'],
+  ['g-garis','Bercak garis sempit cokelat kemerahan sejajar tulang daun'],
+  ['g-garisbasah','Garis-garis basah tembus cahaya di antara tulang daun, lalu berubah jingga'],
+  ['g-bulirbusuk','Malai tetap tegak, bulir hampa berwarna cokelat kusam sejak keluar malai'],
+  ['g-g-rumput','Gulma rumput (jajagoan, timunan) tumbuh di antara padi'],
+  ['g-g-teki','Gulma teki (batang segitiga) tumbuh di antara padi'],
+  ['g-g-daun','Gulma daun lebar (genjer, eceng, semanggi) tumbuh di antara padi']
 ];
 LP.OPT = [
   { id:'wbc', nama:'Wereng batang cokelat', latin:'Nilaparvata lugens', jenis:'hama', fase:['vegetatif','generatif'], gejala:['g-hopper','g-pangkal'],
@@ -768,14 +802,91 @@ LP.OPT = [
     ambang:'Penyakit ini menandakan tanah kurang subur; perbaiki hara lebih dulu.',
     kultur:['Cukupi kalium dan bahan organik.','Pakai benih sehat dari pertanaman yang tidak sakit.'],
     ba:[ {n:'Azoksistrobin 200 + difenokonazol 125 g/L SC', gol:'FRAC 11 + 3', dosis:0.5, min:0.4, max:0.5, sat:'L', st:'label'} ], ruj:'opt' },
-  { id:'gulma', nama:'Gulma', latin:'rumput, teki, daun lebar', jenis:'gulma', fase:['vegetatif'], gejala:['g-gulma'],
-    ambang:'Padi paling peka terhadap gulma sampai umur 42 hari setelah tanam.',
-    kultur:['Olah tanah sempurna dan ratakan petakan.','Siangi dengan gasrok atau landak pada 14 dan 28 hari setelah tanam.','Genangi 2–5 cm setelah bibit tegak.'],
-    ba:[ {n:'Oksadiazon 250 g/L EC — pratumbuh, 0–3 HST', gol:'HRAC 14', dosis:1.5, min:1.0, max:2.0, sat:'L', st:'uji'},
-         {n:'Bispiribak-natrium 100 g/L SC — purnatumbuh, 10–15 HST', gol:'HRAC 2', dosis:0.25, min:0.2, max:0.3, sat:'L', st:'uji'},
-         {n:'Penoksulam 25 g/L OD — purnatumbuh, 10–14 HST', gol:'HRAC 2', dosis:0.7, min:0.6, max:0.75, sat:'L', st:'uji'},
-         {n:'2,4-D dimetil amina 865 g/L SL — daun lebar dan teki, 21–28 HST', gol:'HRAC 4', dosis:1.0, min:0.75, max:1.5, sat:'L', st:'label'} ],
-    semprot:'Air macak-macak saat aplikasi, lalu genangi kembali 2–3 hari kemudian.', ruj:'opt' }
+  { id:'ulat', nama:'Ulat grayak', latin:'Spodoptera mauritia, Mythimna separata', jenis:'hama', fase:['semai','vegetatif'], gejala:['g-gundul'],
+    ambang:'Kendalikan bila terlihat kelompok ulat dan daun mulai gundul, terutama di persemaian dan padi gogo.',
+    kultur:['Genangi persemaian atau petakan sebentar supaya ulat naik lalu mudah dikumpulkan.','Bersihkan rumput di pematang yang menjadi tempat berlindung.','Amati sore atau malam hari karena ulat bersembunyi pada siang hari.'],
+    ba:[ {n:'Emamektin benzoat 5% SG', gol:'IRAC 6', dosis:0.25, min:0.2, max:0.4, sat:'kg', st:'label'},
+         {n:'Klorantraniliprol 50 g/L SC', gol:'IRAC 28', dosis:0.3, min:0.3, max:0.5, sat:'L', st:'label'},
+         {n:'Deltametrin 25 g/L EC', gol:'IRAC 3A', dosis:0.3, min:0.25, max:0.5, sat:'L', st:'label', ket:'Hindari bila ada wereng karena memicu ledakan ulang.'} ],
+    semprot:'Semprot sore hari saat ulat mulai keluar.', ruj:'opt' },
+  { id:'ganjur', nama:'Ganjur', latin:'Orseolia oryzae', jenis:'hama', fase:['semai','vegetatif'], gejala:['g-bawang'],
+    ambang:'Kendalikan bila anakan berbentuk daun bawang sudah lebih dari 5% pada fase anakan.',
+    kultur:['Tanam serempak dan lebih awal pada musim hujan.','Bersihkan rumput inang di sekitar sawah sebelum tanam.','Anakan yang sudah menjadi pipa tidak bisa pulih; dorong anakan baru dengan pemupukan berimbang.'],
+    ba:[ {n:'Karbofuran 3% GR (tabur, fase vegetatif)', gol:'IRAC 1A', dosis:20, min:17, max:20, sat:'kg', st:'label', tipe:'tabur'},
+         {n:'Fipronil 0,3% GR (tabur)', gol:'IRAC 2B', dosis:10, min:10, max:15, sat:'kg', st:'label', tipe:'tabur'} ], ruj:'opt' },
+  { id:'kepinding', nama:'Kepinding tanah', latin:'Scotinophara coarctata', jenis:'hama', fase:['vegetatif','generatif'], gejala:['g-kepinding'],
+    ambang:'Kendalikan bila ditemukan 5 ekor atau lebih per rumpun.',
+    kultur:['Naikkan air petakan beberapa hari supaya kepinding naik ke atas dan telur terendam.','Pasang lampu perangkap saat bulan purnama.','Bersihkan gulma dan singgang yang menjadi tempat bertahan.'],
+    ba:[ {n:'BPMC (fenobukarb) 500 g/L EC', gol:'IRAC 1A', dosis:1, min:1, max:1.5, sat:'L', st:'label'},
+         {n:'Fipronil 50 g/L SC', gol:'IRAC 2B', dosis:0.5, min:0.4, max:0.5, sat:'L', st:'label'} ],
+    semprot:'Arahkan semprotan ke pangkal batang.', ruj:'opt' },
+  { id:'orong', nama:'Orong-orong (anjing tanah)', latin:'Gryllotalpa orientalis', jenis:'hama', fase:['semai','vegetatif'], gejala:['g-akar'],
+    ambang:'Masalah di persemaian kering, padi gogo, dan sawah yang airnya tidak rata.',
+    kultur:['Genangi petakan; orong-orong tidak tahan tanah tergenang.','Ratakan tanah supaya tidak ada bagian yang kering.'],
+    ba:[ {n:'Karbofuran 3% GR (tabur, fase vegetatif)', gol:'IRAC 1A', dosis:17, min:17, max:20, sat:'kg', st:'label', tipe:'tabur'},
+         {n:'Fipronil 0,3% GR (tabur)', gol:'IRAC 2B', dosis:10, min:10, max:15, sat:'kg', st:'label', tipe:'tabur'} ], ruj:'opt' },
+  { id:'burung', nama:'Burung pipit', latin:'Lonchura spp.', jenis:'hama', fase:['generatif','pemasakan'], gejala:['g-patuk'],
+    ambang:'Serangan terberat saat bulir masak susu sampai menguning, pagi dan sore hari.',
+    kultur:['Tanam serempak supaya serangan tidak terkumpul di satu petak.','Pasang jaring, tali berkilau, atau orang-orangan dan pindahkan letaknya tiap beberapa hari.','Jaga langsung pada jam serangan: pukul 6–10 dan 14–18.'],
+    ba:[], ruj:'opt' },
+  { id:'kerdil', nama:'Kerdil rumput dan kerdil hampa', latin:'virus, ditularkan wereng batang cokelat', jenis:'penyakit', fase:['vegetatif','generatif'], gejala:['g-rumput'],
+    ambang:'Tidak ada obat untuk tanaman sakit; yang dikendalikan adalah wereng cokelat pembawa virus.',
+    kultur:['Cabut dan benamkan rumpun sakit supaya tidak menjadi sumber virus.','Kendalikan wereng cokelat sejak persemaian.','Tanam serempak dan beri jeda tanpa padi supaya siklus wereng putus.'],
+    ba:[ {n:'Pimetrozin 50% WG', gol:'IRAC 9B', dosis:0.3, min:0.3, max:0.5, sat:'kg', st:'uji', ket:'Untuk wereng pembawa virus.'},
+         {n:'Triflumezopirim 106 g/L SC', gol:'IRAC 4E', dosis:0.24, min:0.2, max:0.25, sat:'L', st:'uji', ket:'Untuk wereng pembawa virus.'} ], ruj:'opt' },
+  { id:'busukbatang', nama:'Busuk batang', latin:'Sclerotium oryzae', jenis:'penyakit', fase:['generatif','pemasakan'], gejala:['g-rebah'],
+    ambang:'Kendalikan bila bercak hitam di pelepah bawah sudah terlihat pada fase anakan maksimum.',
+    kultur:['Keringkan petakan berkala; penyakit berkembang pada air yang terus tergenang.','Kurangi urea berlebihan dan cukupi kalium.','Jangan biarkan tunggul sakit; benamkan atau lapukkan dengan dekomposer.'],
+    ba:[ {n:'Difenokonazol 250 g/L EC', gol:'FRAC 3', dosis:0.5, min:0.25, max:0.5, sat:'L', st:'label'},
+         {n:'Heksakonazol 50 g/L SC', gol:'FRAC 3', dosis:0.5, min:0.5, max:1, sat:'L', st:'label'} ],
+    semprot:'Arahkan semprotan ke pangkal batang.', ruj:'opt' },
+  { id:'gosong', nama:'Gosong palsu', latin:'Ustilaginoidea virens', jenis:'penyakit', fase:['generatif','pemasakan'], gejala:['g-gosong'],
+    ambang:'Pencegahan saat bunting akhir di lahan yang musim lalu terserang; bulir yang sudah jadi bola spora tidak bisa diobati.',
+    kultur:['Hindari urea berlebihan, terutama pemupukan terlambat.','Pakai benih sehat dan jangan ambil benih dari petak terserang.','Buang malai bergejala sebelum sporanya menyebar.'],
+    ba:[ {n:'Propikonazol 250 g/L EC', gol:'FRAC 3', dosis:0.5, min:0.25, max:0.5, sat:'L', st:'label'},
+         {n:'Tembaga hidroksida 77% WP', gol:'FRAC M01', dosis:0.8, min:0.5, max:1, sat:'kg', st:'label'} ], ruj:'opt' },
+  { id:'bcs', nama:'Bercak cokelat sempit', latin:'Cercospora oryzae', jenis:'penyakit', fase:['generatif','pemasakan'], gejala:['g-garis'],
+    ambang:'Biasanya muncul pada tanah kurang kalium; kendalikan bila daun bendera mulai terserang.',
+    kultur:['Cukupi pupuk kalium.','Pakai varietas yang lebih tahan bila selalu terserang.'],
+    ba:[ {n:'Difenokonazol 250 g/L EC', gol:'FRAC 3', dosis:0.5, min:0.25, max:0.5, sat:'L', st:'label'},
+         {n:'Azoksistrobin 200 + difenokonazol 125 g/L SC', gol:'FRAC 11 + 3', dosis:0.5, min:0.4, max:0.5, sat:'L', st:'label'} ], ruj:'opt' },
+  { id:'bls', nama:'Bakteri daun bergaris', latin:'Xanthomonas oryzae pv. oryzicola', jenis:'penyakit', fase:['vegetatif','generatif'], gejala:['g-garisbasah'],
+    ambang:'Menyebar cepat setelah hujan angin; kendalikan sejak garis pertama terlihat.',
+    kultur:['Kurangi urea dan keringkan petakan berkala.','Jangan berjalan di pertanaman saat daun basah.','Pakai benih sehat.'],
+    ba:[ {n:'Tembaga hidroksida 77% WP', gol:'FRAC M01', dosis:0.8, min:0.5, max:1, sat:'kg', st:'label', ket:'Menekan penyebaran, tidak menyembuhkan daun yang sudah sakit.'} ], ruj:'opt' },
+  { id:'bulirbusuk', nama:'Busuk bulir bakteri', latin:'Burkholderia glumae', jenis:'penyakit', fase:['generatif','pemasakan'], gejala:['g-bulirbusuk'],
+    ambang:'Terbawa benih dan parah bila malam panas saat berbunga; pencegahan lebih menentukan daripada penyemprotan.',
+    kultur:['Pakai benih bersertifikat dari pertanaman sehat.','Hindari urea berlebihan.','Atur waktu tanam supaya pembungaan tidak jatuh pada puncak panas.'],
+    ba:[ {n:'Tembaga hidroksida 77% WP', gol:'FRAC M01', dosis:0.8, min:0.5, max:1, sat:'kg', st:'label', ket:'Disemprot saat bunting akhir sebagai pencegahan.'} ], ruj:'opt' },
+  { id:'gulmaPra', nama:'Gulma: pratumbuh (mematikan biji gulma)', latin:'disemprot ke tanah sebelum gulma tumbuh', jenis:'gulma', fase:['olah','vegetatif'], gejala:[],
+    ambang:'Diberikan setelah perataan tanah terakhir sampai 3–5 hari setelah tanam, sebelum gulma muncul.',
+    kultur:['Olah tanah sempurna dan ratakan petakan supaya herbisida membentuk lapisan merata.','Tanah macak-macak saat aplikasi, lalu jaga air dangkal 3–5 hari.','Untuk tabela, pakai produk yang mengandung pelindung benih (safener).'],
+    ba:[ {n:'Oksadiazon 250 g/L EC', gol:'HRAC 14', dosis:1.5, min:1, max:2, sat:'L', st:'uji'},
+         {n:'Pretilaklor 300 g/L EC', gol:'HRAC 15', dosis:1.25, min:1, max:1.5, sat:'L', st:'label', ket:'Bentuk dengan safener aman untuk tabela.'},
+         {n:'Butaklor 600 g/L EC', gol:'HRAC 15', dosis:1.5, min:1.5, max:2, sat:'L', st:'label'},
+         {n:'Pendimetalin 330 g/L EC', gol:'HRAC 3', dosis:2.5, min:2, max:3, sat:'L', st:'label', ket:'Untuk padi gogo dan tabela kering.'} ],
+    semprot:'Jangan menginjak-injak petakan setelah aplikasi supaya lapisan herbisida tidak rusak.', ruj:'opt' },
+  { id:'gulmaRumput', nama:'Gulma rumput', latin:'jajagoan (Echinochloa), timunan (Leptochloa)', jenis:'gulma', fase:['vegetatif'], gejala:['g-g-rumput'],
+    ambang:'Semprot saat gulma berdaun 2–4 helai, sekitar 10–15 hari setelah tanam. Padi paling peka gulma sampai 42 HST.',
+    kultur:['Genangi 2–5 cm setelah bibit tegak.','Siangi dengan gasrok atau landak pada 14 dan 28 hari setelah tanam.'],
+    ba:[ {n:'Bispiribak-natrium 100 g/L SC', gol:'HRAC 2', dosis:0.25, min:0.2, max:0.3, sat:'L', st:'uji', ket:'Juga menekan teki dan sebagian daun lebar.'},
+         {n:'Penoksulam 25 g/L OD', gol:'HRAC 2', dosis:0.7, min:0.6, max:0.75, sat:'L', st:'uji', ket:'Juga menekan teki dan daun lebar.'},
+         {n:'Sihalofop-butil 100 g/L EC', gol:'HRAC 1', dosis:1, min:1, max:1.5, sat:'L', st:'label', ket:'Khusus rumput, aman untuk padi.'} ],
+    semprot:'Surutkan air sampai gulma terbuka saat aplikasi, lalu genangi kembali 2–3 hari kemudian.', ruj:'opt' },
+  { id:'gulmaTeki', nama:'Gulma teki', latin:'Cyperus difformis, C. iria, Fimbristylis', jenis:'gulma', fase:['vegetatif'], gejala:['g-g-teki'],
+    ambang:'Semprot saat teki masih muda, 10–20 hari setelah tanam.',
+    kultur:['Genangi 2–5 cm setelah bibit tegak; kebanyakan teki tertekan oleh genangan.','Siangi dengan gasrok atau landak pada 14 dan 28 hari setelah tanam.'],
+    ba:[ {n:'Etil pirazosulfuron 10% WP', gol:'HRAC 2', dosis:0.2, min:0.15, max:0.2, sat:'kg', st:'label', ket:'Juga menekan daun lebar.'},
+         {n:'2,4-D dimetil amina 865 g/L SL', gol:'HRAC 4', dosis:1, min:0.75, max:1.5, sat:'L', st:'label', ket:'Pakai pada 21–28 HST; jangan saat padi bunting.'},
+         {n:'Bispiribak-natrium 100 g/L SC', gol:'HRAC 2', dosis:0.25, min:0.2, max:0.3, sat:'L', st:'uji'} ],
+    semprot:'Surutkan air sampai gulma terbuka saat aplikasi, lalu genangi kembali 2–3 hari kemudian.', ruj:'opt' },
+  { id:'gulmaDaun', nama:'Gulma daun lebar', latin:'genjer (Limnocharis), eceng (Monochoria), semanggi (Marsilea)', jenis:'gulma', fase:['vegetatif'], gejala:['g-g-daun'],
+    ambang:'Semprot saat gulma berdaun 2–4 helai, sekitar 14–28 hari setelah tanam.',
+    kultur:['Siangi dengan gasrok atau landak pada 14 dan 28 hari setelah tanam.','Jaga genangan dangkal yang merata.'],
+    ba:[ {n:'Metil metsulfuron 20% WG', gol:'HRAC 2', dosis:0.02, min:0.015, max:0.02, sat:'kg', st:'label', ket:'Takaran sangat kecil (15–20 g/ha); timbang dengan teliti.'},
+         {n:'2,4-D dimetil amina 865 g/L SL', gol:'HRAC 4', dosis:1, min:0.75, max:1.5, sat:'L', st:'label', ket:'Pakai pada 21–28 HST; jangan saat padi bunting.'},
+         {n:'Etil pirazosulfuron 10% WP', gol:'HRAC 2', dosis:0.2, min:0.15, max:0.2, sat:'kg', st:'label'} ],
+    semprot:'Surutkan air sampai gulma terbuka saat aplikasi, lalu genangi kembali 2–3 hari kemudian.', ruj:'opt' }
 ];
 
 /* Jenis tanah → kebutuhan kapur (t/ha) untuk menaikkan pH 1 satuan (pendekatan praktis) */
@@ -790,6 +901,49 @@ LP.SOILS = [
   {id:'gambut',   label:'Gambut / Histosol', f:4.0}
 ];
 LP.TEX_TO_SOIL = { pasir:'regosol', lempung:'aluvial', liat:'pmk' };
+
+/* =====================================================================
+   GLOSARIUM BAHAN AKTIF
+   k = kata kunci untuk mencocokkan dengan nama bahan aktif di LP.OPT.
+   merek = contoh merek yang umum dikenal; BELUM dicocokkan dengan daftar izin Kementan terbaru.
+   ===================================================================== */
+LP.ZAT = [
+  {k:'pimetrozin', n:'Pimetrozin', jenis:'Insektisida', kerja:'Membuat wereng berhenti mengisap lalu mati kelaparan; aman bagi musuh alami.', merek:['Plenum 50 WG']},
+  {k:'triflumezopirim', n:'Triflumezopirim', jenis:'Insektisida', kerja:'Melumpuhkan saraf wereng; bertahan lama dalam tanaman.', merek:['Pexalon 106 SC']},
+  {k:'buprofezin', n:'Buprofezin', jenis:'Insektisida', kerja:'Menggagalkan ganti kulit nimfa wereng; kerjanya lambat, tidak mematikan dewasa.', merek:['Applaud 100 EC', 'Applaud 10 WP']},
+  {k:'dinotefuran', n:'Dinotefuran', jenis:'Insektisida', kerja:'Sistemik, meracuni saraf serangga pengisap.', merek:['Oshin 20 SG', 'Starkle']},
+  {k:'tiametoksam', n:'Tiametoksam', jenis:'Insektisida', kerja:'Sistemik, meracuni saraf serangga pengisap seperti wereng hijau.', merek:['Actara 25 WG']},
+  {k:'klorantraniliprol', n:'Klorantraniliprol', jenis:'Insektisida', kerja:'Melumpuhkan otot ulat dan penggerek sehingga berhenti makan.', merek:['Prevathon 50 SC', 'Ferterra 0,4 GR']},
+  {k:'spinetoram', n:'Spinetoram', jenis:'Insektisida', kerja:'Meracuni saraf ulat dan penggerek lewat kontak dan lambung.', merek:['Endure 120 SC']},
+  {k:'dimehipo', n:'Dimehipo', jenis:'Insektisida', kerja:'Sistemik, racun lambung untuk penggerek batang.', merek:['Spontan 400 SL', 'Manuver 400 SL']},
+  {k:'karbofuran', n:'Karbofuran', jenis:'Insektisida butiran', kerja:'Sistemik lewat akar; sangat beracun, pakai sarung tangan dan hanya pada fase vegetatif.', merek:['Furadan 3 GR']},
+  {k:'bpmc', n:'BPMC (fenobukarb)', jenis:'Insektisida', kerja:'Racun kontak yang cepat menjatuhkan serangga.', merek:['Bassa 500 EC', 'Baycarb 500 EC']},
+  {k:'lambda-sihalotrin', n:'Lambda-sihalotrin', jenis:'Insektisida', kerja:'Piretroid kontak; bisa memicu ledakan wereng bila sering dipakai.', merek:['Matador 25 EC']},
+  {k:'deltametrin', n:'Deltametrin', jenis:'Insektisida', kerja:'Piretroid kontak; bisa memicu ledakan wereng bila sering dipakai.', merek:['Decis 25 EC']},
+  {k:'fipronil', n:'Fipronil', jenis:'Insektisida', kerja:'Racun saraf kontak dan lambung; tersedia cair dan butiran.', merek:['Regent 50 SC', 'Regent 0,3 GR']},
+  {k:'emamektin', n:'Emamektin benzoat', jenis:'Insektisida', kerja:'Melumpuhkan ulat setelah termakan.', merek:['Proclaim 5 SG']},
+  {k:'rodentisida', n:'Rodentisida antikoagulan (brodifakum, kumatetralil)', jenis:'Rodentisida', kerja:'Mencegah pembekuan darah; tikus mati beberapa hari setelah makan umpan.', merek:['Klerat RM-B', 'Petrokum RMB', 'Racumin']},
+  {k:'niklosamida', n:'Niklosamida', jenis:'Moluskisida', kerja:'Mematikan keong mas lewat kontak di air dangkal.', merek:['Bayluscide 250 EC']},
+  {k:'saponin', n:'Saponin', jenis:'Moluskisida nabati', kerja:'Merusak selaput lendir keong; berasal dari bungkil biji teh.', merek:[]},
+  {k:'trisiklazol', n:'Trisiklazol', jenis:'Fungisida', kerja:'Sistemik, mencegah jamur blas menembus daun dan leher malai.', merek:['Filia 525 SE (campuran dengan propikonazol)']},
+  {k:'isoprotiolan', n:'Isoprotiolan', jenis:'Fungisida', kerja:'Sistemik untuk blas daun dan blas leher.', merek:['Fujiwan 400 EC']},
+  {k:'azoksistrobin', n:'Azoksistrobin + difenokonazol', jenis:'Fungisida', kerja:'Dua cara kerja: menghentikan pernapasan jamur dan pembentukan dinding selnya.', merek:['Amistar Top 325 SC']},
+  {k:'difenokonazol', n:'Difenokonazol', jenis:'Fungisida', kerja:'Sistemik, menghambat pembentukan dinding sel jamur.', merek:['Score 250 EC']},
+  {k:'propikonazol', n:'Propikonazol', jenis:'Fungisida', kerja:'Sistemik, menghambat pembentukan dinding sel jamur.', merek:['Tilt 250 EC']},
+  {k:'heksakonazol', n:'Heksakonazol', jenis:'Fungisida', kerja:'Sistemik untuk hawar pelepah.', merek:['Anvil 50 SC']},
+  {k:'validamisin', n:'Validamisin', jenis:'Fungisida antibiotik', kerja:'Menghentikan pertumbuhan jamur hawar pelepah.', merek:['Validacin 3 L']},
+  {k:'tembaga hidroksida', n:'Tembaga hidroksida', jenis:'Bakterisida dan fungisida', kerja:'Pelindung di permukaan daun; mencegah penyebaran, tidak menyembuhkan.', merek:['Kocide 77 WP', 'Kocide 54 WG']},
+  {k:'oksadiazon', n:'Oksadiazon', jenis:'Herbisida pratumbuh', kerja:'Membentuk lapisan di permukaan tanah yang mematikan kecambah gulma.', merek:['Ronstar 250 EC']},
+  {k:'pretilaklor', n:'Pretilaklor', jenis:'Herbisida pratumbuh', kerja:'Menghambat pertumbuhan tunas kecambah gulma.', merek:['Sofit 300 EC (dengan safener)', 'Rifit 500 EC']},
+  {k:'butaklor', n:'Butaklor', jenis:'Herbisida pratumbuh', kerja:'Menghambat pertumbuhan tunas kecambah gulma.', merek:['Machete 600 EC']},
+  {k:'pendimetalin', n:'Pendimetalin', jenis:'Herbisida pratumbuh', kerja:'Menghentikan pembelahan sel akar kecambah gulma.', merek:['Prowl 330 EC', 'Stomp 330 EC']},
+  {k:'bispiribak', n:'Bispiribak-natrium', jenis:'Herbisida purnatumbuh', kerja:'Menghentikan pembentukan protein gulma rumput, teki, dan daun lebar.', merek:['Nominee 100 SC']},
+  {k:'penoksulam', n:'Penoksulam', jenis:'Herbisida purnatumbuh', kerja:'Menghentikan pembentukan protein gulma rumput, teki, dan daun lebar.', merek:['Clipper 25 OD']},
+  {k:'sihalofop', n:'Sihalofop-butil', jenis:'Herbisida purnatumbuh', kerja:'Khusus gulma rumput; merusak titik tumbuhnya.', merek:['Clincher 100 EC']},
+  {k:'pirazosulfuron', n:'Etil pirazosulfuron', jenis:'Herbisida purnatumbuh', kerja:'Untuk teki dan daun lebar; menghentikan pembentukan protein.', merek:['Sirius 10 WP', 'Billy 10 WP']},
+  {k:'metsulfuron', n:'Metil metsulfuron', jenis:'Herbisida purnatumbuh', kerja:'Untuk daun lebar dan pakis-pakisan; takaran sangat kecil.', merek:['Ally 20 WG']},
+  {k:'2,4-d', n:'2,4-D dimetil amina', jenis:'Herbisida purnatumbuh', kerja:'Hormon tumbuh berlebih yang mematikan daun lebar dan teki.', merek:['DMA 6 825 SL', 'Lindomin 865 SL']}
+];
 
 LP.SOURCES = {
   pupuk: ['Permentan No. 40/Permentan/OT.140/4/2007, Rekomendasi Pemupukan N, P, K Padi Sawah Spesifik Lokasi', 'https://jdih.pertanian.go.id/sources/files/Pert-40-07.pdf'],
@@ -918,8 +1072,10 @@ if (typeof module !== 'undefined') module.exports = LP;
   C.KADAR = KADAR;
   C.pupukTunggal = function(crop, o){
     var p = crop.pupuk, kelas = p.kelasHasil.filter(function(k){ return k.id === o.hasil; })[0] || p.kelasHasil[1];
-    var kclTab = (o.jerami && p.kclJerami) ? p.kclJerami : p.kcl;
-    var d = { urea: kelas.urea, sp36: p.sp36[o.p], kcl: kclTab[o.k] };
+    /* jeramiFr: bagian dari 5 t/ha jerami yang kembali ke lahan (0..1); KCl turun sebanding */
+    var fr = o.jeramiFr != null ? Math.max(0, Math.min(1, o.jeramiFr)) : (o.jerami ? 1 : 0);
+    var kcl = p.kcl[o.k] - (p.kclJerami ? (p.kcl[o.k] - p.kclJerami[o.k]) * fr : 0);
+    var d = { urea: kelas.urea, sp36: p.sp36[o.p], kcl: kcl };
     d.N = d.urea * KADAR.urea; d.P2O5 = d.sp36 * KADAR.sp36; d.K2O = d.kcl * KADAR.kcl;
     return d;
   };
@@ -933,7 +1089,7 @@ if (typeof module !== 'undefined') module.exports = LP;
   C.jadwalPupuk = function(crop, dosisHa, m2, jadwal){
     return (jadwal || crop.pupuk.jadwal).map(function(j){
       var r = { waktu:j.waktu };
-      ['urea','sp36','kcl','npk'].forEach(function(k){ if (dosisHa[k] != null) r[k] = dosisHa[k] * (j[k] || 0) * ha(m2); });
+      ['urea','sp36','kcl','npk','za'].forEach(function(k){ if (dosisHa[k] != null) r[k] = dosisHa[k] * (j[k] || 0) * ha(m2); });
       return r;
     });
   };
@@ -1014,7 +1170,10 @@ if (typeof module !== 'undefined') module.exports = LP;
       pop = s.rumpunM2 * 10000;
       kgHa = pop * (o.bibit || s.bibit) * o.b1000 / 1e6 / dk / (s.pindah ? (o.hidupSemai || 70) / 100 : 1);
     } else kgHa = (o.kgHa != null ? o.kgHa : s.kgHa) * 0.85 / dk;
-    return { kgHa:kgHa, kg: kgHa * ha(o.m2), popHa:pop, populasi: pop ? pop * ha(o.m2) : null };
+    /* efektif = bagian lahan yang benar-benar ditanami setelah dikurangi saluran (0..1) */
+    var ef = o.efektif != null ? o.efektif : 1; kgHa *= ef;
+    if (!pop && s.tumbuh) pop = (o.kgHa != null ? o.kgHa : s.kgHa) * 1e6 / o.b1000 * (s.tumbuh / 100);   /* tabela: taksiran tanaman tumbuh */
+    return { kgHa:kgHa, kg: kgHa * ha(o.m2), popKotorHa:pop, popHa: pop ? pop * ef : null, populasi: pop ? pop * ef * ha(o.m2) : null };
   };
   /* Bibit per lubang: kelas anakan produktif (tinggi 2, sedang 3, rendah 4) ditambah koreksi kondisi air, dibatasi 2–4 */
   C.bibitPerLubang = function(dasar, tambah){ return Math.max(2, Math.min(4, dasar + (tambah || 0))); };
@@ -1031,12 +1190,21 @@ if (typeof module !== 'undefined') module.exports = LP;
   };
 
   /* Rendemen: gabah panen → GKP bersih → GKG → beras, dengan hasil samping */
+  /* Saluran keliling: persen luas yang terpakai. Tanpa keliling terukur, petakan dianggap persegi panjang 1 : 2. */
+  C.saluranPersen = function(m2, kelilingM, lebarM, maks){
+    if (!(m2 > 0)) return 0;
+    var kel = kelilingM > 0 ? kelilingM : 6 * Math.sqrt(m2 / 2);
+    return Math.min(maks || 15, kel * lebarM / m2 * 100);
+  };
+  /* Hasil riil = hasil ubinan × bagian lahan yang ditanami × (1 − kehilangan panen) */
+  C.hasilRiil = function(tHa, saluranPersen, hilangPersen){ return tHa * (1 - (saluranPersen || 0) / 100) * (1 - (hilangPersen || 0) / 100); };
   C.rendemen = function(o){
     var gkp = o.kotor * (1 - (o.kotoran || 0) / 100);
     var gkg = C.koreksiKA(gkp, o.ka, o.kaStd);
-    var beras = gkg * o.giling / 100, sekam = gkg * o.sekam / 100, dedak = gkg * o.dedak / 100;
-    return { kotor:o.kotor, gkp:gkp, gkg:gkg, beras:beras, sekam:sekam, dedak:dedak,
-             susutLain: Math.max(0, gkg - beras - sekam - dedak),
+    /* menir adalah bagian dari hasil giling yang dipisahkan; beras = hasil giling − menir */
+    var giling = gkg * o.giling / 100, menir = gkg * (o.menir || 0) / 100, beras = Math.max(0, giling - menir), sekam = gkg * o.sekam / 100, dedak = gkg * o.dedak / 100;
+    return { kotor:o.kotor, gkp:gkp, gkg:gkg, giling:giling, menir:menir, beras:beras, sekam:sekam, dedak:dedak,
+             susutLain: Math.max(0, gkg - giling - sekam - dedak),
              rendGkpGkg: gkp ? gkg / gkp * 100 : 0, rendTotal: o.kotor ? beras / o.kotor * 100 : 0 };
   };
 
@@ -1480,6 +1648,7 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
   function opsi(el, list, val){ el.innerHTML = list.map(function(o){ return '<option value="' + o.id + '"' + (o.id === val ? ' selected' : '') + '>' + esc(o.label) + '</option>'; }).join(''); }
   function renderProfil(){
     opsi($('pfEko'), K.eko, S.profil.eko); opsi($('pfSistem'), sistemCocok(), S.profil.sistem); opsi($('pfMusim'), K.musim, S.profil.musim);
+    $('pfSistemKet').textContent = ketPopulasi(sistem());
     opsi($('pfAir'), K.air, S.profil.air);
     $('pfTanam').value = S.profil.tanam || '';
   }
@@ -1521,6 +1690,23 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
      ===================================================================== */
   function varDipilih(){ return K.varietas.filter(function(v){ return v.n === S.varietas; })[0] || null; }
   /* Bibit per lubang otomatis: kelas anakan produktif varietas + kondisi air di profil */
+  /* Saluran keliling: persen luas yang tidak ditanami. Otomatis dari keliling lahan, bisa diubah di form. */
+  function salAuto(){
+    var sl = K.saluran; if (sl.tanpa.indexOf(S.profil.eko) >= 0 || !(S.areaM2 > 0)) return 0;
+    var kel = (S.areaSrc === 'plot' && S.aktif && S.aktif.pts) ? keliling(S.aktif.pts) : 0;
+    return Math.round(C.saluranPersen(S.areaM2, kel, sl.lebarM, sl.maks) * 10) / 10;
+  }
+  function salPersen(){ return F.salManual != null ? F.salManual : salAuto(); }
+  function ketSaluran(){
+    return K.saluran.tanpa.indexOf(S.profil.eko) >= 0 ? 'Lahan kering tanpa saluran keliling; isi bila ada.' :
+      'Perkiraan otomatis: saluran keliling selebar ' + String(K.saluran.lebarM).replace('.', ',') + ' m di sepanjang ' + (S.areaSrc === 'plot' && S.aktif ? 'batas lahan yang diukur' : 'tepi petakan') + '. Petakan kecil terpotong lebih besar. Bisa diubah.';
+  }
+  function syncSaluran(){ ['bnSaluran','esSaluran'].forEach(function(i){ var e = $(i); if (e && document.activeElement !== e) e.value = salPersen(); }); if ($('bnSaluranKet')) $('bnSaluranKet').textContent = ketSaluran(); }
+  /* keterangan populasi tiap sistem tanam */
+  function ketPopulasi(s){
+    if (s.rumpunM2) return 'Populasi ' + fmt(s.rumpunM2 * 10000, 0) + (s.pindah ? ' rumpun' : ' lubang') + ' per hektare sebelum dikurangi saluran.';
+    return s.ket + ' Populasi tidak dihitung per rumpun; perkiraan ±' + fmt(s.kgHa * 1e6 / K.benih.b1000 * s.tumbuh / 100 / 10000, 0) + ' tanaman per m² dari ' + s.kgHa + ' kg benih per hektare.';
+  }
   function airProfil(){ return K.air.filter(function(a){ return a.id === S.profil.air; })[0] || K.air[0]; }
   function bibitAuto(kelas){
     var s = sistem(); if (!s.rumpunM2) return null;
@@ -1548,7 +1734,8 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
       (s.pindah ? ketBibit(kelas) : 'Tugal 4–5 butir per lubang.') + '</span></div>';
     if (s.pindah) h += fld('bnHidup', 'Bibit yang jadi di persemaian (%)', b.hidupSemai, 'Cadangan untuk benih tidak tumbuh, bibit rusak, dan sulam.') +
       fld('bnUmurBibit', 'Umur bibit saat tanam (hari)', b.umurBibit) + fld('bnSemai', 'Luas persemaian (% luas tanam)', b.semaiPersen, 'Baku 4%, yaitu 400 m² per hektare.');
-    if (!s.rumpunM2) h += fld('bnKgHa', 'Takaran benih (kg/ha)', s.kgHa, 'Pada daya kecambah 85%.');
+    if (!s.rumpunM2) h += fld('bnKgHa', 'Takaran benih (kg/ha)', s.kgHa, 'Pada daya kecambah 85%. ' + esc(s.ket));
+    h += '<div class="fld"><label for="bnSaluran">Luas untuk saluran keliling (%)</label><input class="inp" type="number" step="0.1" min="0" max="30" inputmode="decimal" id="bnSaluran" value="' + salPersen() + '"><span class="help" id="bnSaluranKet">' + ketSaluran() + '</span></div>';
     h += '</div><div style="margin-top:22px;">' + h3(3, 'Perlakuan benih') + '</div><div class="grid2">' + sel('obProduk', 'Perlakuan', list.map(function(x){ return [x.id, x.label]; }), F.obat);
     if (o.tipe === 'garam') h += fld('obGaram', 'Garam per liter air (g)', o.garamGL, 'Sekitar 3%; telur mentah terapung menandakan larutan cukup pekat.');
     else h += fld('obDosis', 'Dosis per kg benih (' + o.satuan + ')', o.dosis, o.min != null ? 'Kisaran ' + fmt(o.min, 0) + '–' + fmt(o.max, 0) + ' ' + o.satuan + '/kg. Ikuti label.' : 'Wajib diisi dari label produk.');
@@ -1573,12 +1760,14 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     var rows = [], v = varDipilih(), out = '';
     if (v) rows.push(['Varietas', v.n, v.gol + (v.umur != null ? ', umur ±' + v.umur + ' hari' : '') + (v.pot != null ? ', potensi ' + fmt(v.pot, 1) + ' t/ha' : '')]);
     if (S.areaM2 > 0){
-      var s = sistem(), r = C.benihPadi({ m2:S.areaM2, sistem:s, b1000:num('bnB1000') || K.benih.b1000, dk:num('bnDK') || 85, bibit:num('bnBibit'), hidupSemai:num('bnHidup'), kgHa:num('bnKgHa') });
+      syncSaluran();
+      var s = sistem(), sal = salPersen(), r = C.benihPadi({ m2:S.areaM2, sistem:s, b1000:num('bnB1000') || K.benih.b1000, dk:num('bnDK') || 85, bibit:num('bnBibit'), hidupSemai:num('bnHidup'), kgHa:num('bnKgHa'), efektif:1 - sal / 100 });
       if (isFinite(r.kg) && r.kg > 0){
         var minis = [mini('Takaran', fmt(r.kgHa, 1) + ' kg/ha')];
-        if (r.populasi) minis.push(mini('Rumpun', fmt(r.populasi, 0), fmt(r.popHa, 0) + ' per ha'), mini(s.pindah ? 'Bibit per lubang' : 'Butir per lubang', fmt(num('bnBibit') || s.bibit, 0)));
+        if (s.rumpunM2) minis.push(mini(s.pindah ? 'Rumpun di lahan ini' : 'Lubang di lahan ini', fmt(r.populasi, 0), 'setelah dikurangi saluran ' + fmt(sal, 1) + '%'), mini('Populasi per hektare', fmt(r.popKotorHa, 0), 'bersih ' + fmt(r.popHa, 0) + ' setelah saluran'), mini(s.pindah ? 'Bibit per lubang' : 'Butir per lubang', fmt(num('bnBibit') || s.bibit, 0)));
+        else minis.push(mini('Perkiraan tanaman tumbuh', '±' + fmt(r.popKotorHa / 10000, 0) + ' per m²', 'tidak berumpun; ' + s.tumbuh + '% benih dianggap jadi tanaman'), mini('Saluran keliling', fmt(sal, 1) + '%', 'luas yang tidak ditabur'));
         if (s.pindah){ var lu = C.persemaian(S.areaM2, num('bnSemai') || K.benih.semaiPersen); minis.push(mini('Luas persemaian', fmt(lu, 0) + ' m²')); rows.push(['Persemaian', fmt(lu, 0) + ' m²', 'umur bibit ' + fmt(num('bnUmurBibit') || K.benih.umurBibit, 0) + ' hari']); }
-        out += hasil('Kebutuhan benih', fmtKg(r.kg), subLahan() + ', ' + s.label.toLowerCase(), minis, '');
+        out += hasil('Kebutuhan benih', fmtKg(r.kg), subLahan() + ', ' + s.label.toLowerCase(), minis, '<p class="src">' + esc(ketPopulasi(s)) + (s.rumpunM2 ? '' : ' Untuk taksiran hasil tabela, pakai cara ubinan di modul Estimasi hasil.') + '</p>');
         J.umurBibit = num('bnUmurBibit') || K.benih.umurBibit;
         J.semai = 'Benih ' + fmtKg(r.kg) + (s.pindah ? ', persemaian ' + fmt(C.persemaian(S.areaM2, num('bnSemai') || K.benih.semaiPersen), 0) + ' m².' : '.');
         J.tanam = s.label + (s.rumpunM2 ? ', ' + fmt(num('bnBibit') || s.bibit, 0) + (s.pindah ? ' bibit' : ' butir') + ' per lubang.' : '.');
@@ -1603,6 +1792,18 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
      ===================================================================== */
   var JENIS = [['hama','Hama'],['penyakit','Penyakit'],['gulma','Gulma']];
   function optDipilih(){ return LP.OPT.filter(function(o){ return o.id === F.opt; })[0] || null; }
+  function zatDari(nama){ var t = nama.toLowerCase(); return LP.ZAT.filter(function(z){ return t.indexOf(z.k) >= 0; })[0] || null; }
+  function merekZat(nama){ var z = zatDari(nama); return z && z.merek.length ? '<br><span style="color:var(--gold-soft)">Contoh merek: ' + esc(z.merek.join(', ')) + '</span>' : ''; }
+  /* Glosarium bahan aktif: kegunaan, cara kerja, dan contoh merek di pasaran */
+  function glosarium(){
+    var urut = LP.ZAT.slice().sort(function(a, b){ return a.n.localeCompare(b.n); });
+    return '<details class="glos"' + (F.glos ? ' open' : '') + '><summary>Glosarium bahan aktif (' + urut.length + ' bahan dan contoh mereknya)</summary>' +
+      '<p class="src">Nama bahan aktif tertulis kecil di label kemasan. Merek di bawah adalah contoh yang umum dikenal dan belum dicocokkan dengan daftar izin Kementerian Pertanian terbaru; kadar tiap merek bisa berbeda, jadi takaran selalu mengikuti label.</p>' +
+      '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Bahan aktif</th><th>Kegunaan</th><th>Cara kerja</th><th>Contoh merek</th><th>Dipakai untuk</th></tr></thead><tbody>' +
+      urut.map(function(z){ var pakai = LP.OPT.filter(function(o){ return o.ba.some(function(b){ return b.n.toLowerCase().indexOf(z.k) >= 0; }); }).map(function(o){ return o.nama.split(' (')[0].replace('Gulma: ', ''); });
+        return '<tr><td><strong>' + esc(z.n) + '</strong></td><td>' + esc(z.jenis) + '</td><td style="color:var(--muted)">' + esc(z.kerja) + '</td><td>' + (z.merek.length ? esc(z.merek.join(', ')) : '–') + '</td><td style="color:var(--muted)">' + esc(pakai.join(', ')) + '</td></tr>'; }).join('') +
+      '</tbody></table></div></details>';
+  }
   function tombolOpt(o, skor){
     return '<button type="button" class="opt-btn' + (F.opt === o.id ? ' active' : '') + '" data-opt="' + o.id + '">' + esc(o.nama) + '<small>' + esc(o.latin) + '</small>' +
       (skor ? '<small class="hit">cocok ' + skor + ' gejala</small>' : '') + '</button>';
@@ -1626,19 +1827,20 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     var o = optDipilih();
     if (o){
       if (!o.ba[F.ba]) F.ba = 0;
-      var b = o.ba[F.ba];
+      var b = o.ba[F.ba] || null;
       h += '<div style="margin-top:24px;border-top:1px solid var(--line);padding-top:20px;"><h3 style="margin-bottom:2px;">' + esc(o.nama) + '</h3><p class="src" style="margin-top:0;font-style:italic;">' + esc(o.latin) + '</p>' +
         '<div class="note-box" style="margin-top:10px;"><strong>Kapan dikendalikan:</strong> ' + esc(o.ambang) + '</div>' +
         '<div class="sub-h">Lakukan ini lebih dulu</div><ul class="plain">' + o.kultur.map(function(k){ return '<li>' + esc(k) + '</li>'; }).join('') + '</ul>' +
-        '<div class="sub-h">Bahan aktif yang cocok</div>' + o.ba.map(function(x, i){
+        (b ? '<div class="sub-h">Bahan aktif yang cocok</div>' : '<div class="note-box">Tidak ada pestisida yang dianjurkan untuk sasaran ini; pengendaliannya dengan cara di atas.</div>') + o.ba.map(function(x, i){
           return '<label class="ba-item' + (i === F.ba ? ' active' : '') + '"><input type="radio" name="ba" data-ba="' + i + '"' + (i === F.ba ? ' checked' : '') + '><div><div class="b-name">' + esc(x.n) + '</div>' +
             '<div class="b-meta">' + esc(x.gol) + (x.dosis != null ? ' · ' + (x.min !== x.max ? fmt(x.min, 2) + '–' + fmt(x.max, 2) : fmt(x.dosis, 2)) + ' ' + x.sat + '/ha' : ' · dosis sesuai label') +
-            (x.st === 'label' ? ' <span class="tag red">cek label</span>' : '') + (x.ket ? '<br>' + esc(x.ket) : '') + '</div></div></label>'; }).join('') +
-        '<div class="grid3" style="margin-top:14px;">' + fld('psDosis', 'Dosis produk (' + b.sat + '/ha)', b.dosis, b.dosis == null ? 'Wajib diisi dari label produk.' : 'Bisa diubah mengikuti label merek yang dibeli.');
+            (x.st === 'label' ? ' <span class="tag red">cek label</span>' : '') + (x.ket ? '<br>' + esc(x.ket) : '') + merekZat(x.n) + '</div></div></label>'; }).join('');
+      if (b){ h += '<div class="grid3" style="margin-top:14px;">' + fld('psDosis', 'Dosis produk (' + b.sat + '/ha)', b.dosis, b.dosis == null ? 'Wajib diisi dari label produk.' : 'Bisa diubah mengikuti label merek yang dibeli.');
       if (!b.tipe) h += fld('psVol', 'Volume semprot (L/ha)', 400, 'Umumnya 350–500 L/ha.') + fld('psTangki', 'Isi tangki semprot (L)', 16);
-      h += '</div>' + (o.semprot ? '<p class="src">' + esc(o.semprot) + '</p>' : '') + '</div>';
+      h += '</div>'; }
+      h += (o.semprot ? '<p class="src">' + esc(o.semprot) + '</p>' : '') + '</div>';
     }
-    $('f-pestisida').innerHTML = h;
+    $('f-pestisida').innerHTML = h + glosarium();
   };
   function daftarPest(){
     var k = Object.keys(S.pest);
@@ -1649,6 +1851,7 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     var o = optDipilih(), out = '';
     F.barisPest = null;
     if (!o) out = '<div class="note-box">Pilih hama, penyakit, atau gulma untuk melihat cara pengendalian dan takarannya.</div>';
+    else if (!o.ba.length) out = '';
     else if (S.areaM2 > 0){
       var b = o.ba[F.ba], ds = num('psDosis'), nm = b.n.split(' — ')[0];
       if (!(ds > 0)) out = '<div class="note-box">Isi <strong>dosis produk per hektare</strong> sesuai label.</div>';
@@ -1679,9 +1882,14 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     var p = K.pupuk, tetap = p.ekoTetap[S.profil.eko];
     var h = h3(1, 'Pupuk dasar dan susulan') + '<div class="grid3">' + sel('ppHasil', 'Sasaran hasil', p.kelasHasil.map(function(k){ return [k.id, k.label]; }), 'sedang');
     if (!tetap) h += sel('ppP', 'Status hara P tanah', STATUS, 'sedang', 'Dari PUTS atau peta status hara.') + sel('ppK', 'Status hara K tanah', STATUS, 'sedang');
-    h += '</div>' + (tetap ? '<p class="src">' + tetap.ket + '</p>' : '<label class="cek" style="margin-top:10px;"><input type="checkbox" id="ppJerami"><span>Jerami sekitar 5 t/ha dikembalikan ke sawah (takaran KCl berkurang)</span></label>') +
-      '<div style="margin-top:14px;"><span class="field-label">Bentuk pupuk</span>' + seg('pupuk', [['tunggal','Urea, SP-36, KCl'],['majemuk', p.majemuk.nama + ' + urea']], F.pupuk) + '</div>' +
-      '<div style="margin-top:22px;">' + h3(2, 'Koreksi urea dengan Bagan Warna Daun') + '</div><div class="grid2">' +
+    h += '</div>' + (tetap ? '<p class="src">' + tetap.ket + '</p>' : '<p class="src" id="ppJeramiKet"></p>') +
+      '<div style="margin-top:14px;"><span class="field-label">Jenis pupuk</span>' + seg('pupuk', [['majemuk','Subsidi: NPK + Urea'],['tunggal','Tunggal: Urea, SP-36, KCl, ZA']], F.pupuk) +
+      '<span class="help" style="display:block;margin-top:6px;">NPK dan urea adalah pupuk bersubsidi; SP-36, KCl, dan ZA nonsubsidi. Produk OFAGRO dipakai dengan takaran yang sama dengan padanannya.</span></div><div class="grid3" style="margin-top:14px;">';
+    if (F.pupuk === 'majemuk') h += sel('ppNpk', 'Produk NPK', p.produkNpk.map(function(x){ return [x[0], x[1]]; }), 'subsidi', 'OFAGRO Mineral+NPK memakai takaran yang sama dengan NPK subsidi.') +
+      sel('ppNpkKali', 'Pemberian NPK', p.npkKali, '1', 'Sekali di awal mengikuti anjuran penelitian; dua kali umum dipakai penyuluh supaya kalium tidak habis di awal.');
+    else h += sel('ppSumberP', 'Produk pupuk P', p.produkP.map(function(x){ return [x[0], x[1]]; }), 'sp36', 'OFAGRO Organik+SP36 memakai takaran yang sama dengan SP-36.') +
+      fld('ppZa', 'ZA (kg/ha)', 0, 'Isi bila memakai ZA sebagai pupuk dasar; urea dikurangi otomatis (100 kg ZA menggantikan ±46 kg urea) dan tanaman mendapat belerang.');
+    h += '</div><div style="margin-top:22px;">' + h3(2, 'Koreksi urea dengan Bagan Warna Daun') + '</div><div class="grid2">' +
       sel('ppBwd', 'Bacaan BWD (rata-rata 10 daun)', [['','Belum dibaca']].concat(p.bwd.map(function(b){ return [b.id, b.label]; })), '', 'Baca tiap 7–10 hari pada 21–50 HST, daun teratas yang sudah terbuka penuh.') + '</div>' +
       '<div style="margin-top:22px;">' + h3(3, 'Booster pengisian bulir') + '</div><div class="grid4">' +
       sel('bsProduk', 'Pupuk daun', p.booster.map(function(b){ return [b.id, b.label]; }), p.booster[0].id) + fld('bsKons', 'Konsentrasi (g/L)', p.booster[0].kons) + fld('bsVol', 'Volume semprot (L/ha)', 400) + fld('bsKali', 'Jumlah aplikasi', 2, 'Saat bunting dan saat malai keluar merata.') + '</div>';
@@ -1690,14 +1898,23 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
   hit.pupuk = function(){
     if (!perluLuas('pupuk')) return;
     var p = K.pupuk, tetap = p.ekoTetap[S.profil.eko], kelas = p.kelasHasil.filter(function(k){ return k.id === $('ppHasil').value; })[0], d, ket = '';
+    /* jerami yang kembali ke lahan diambil dari modul Pembenah tanah; 5 t/ha = pengurangan KCl penuh */
+    var jer = J.jerami || 0, fr = Math.min(1, jer / K.organik.jeramiTHa);
     if (tetap){ d = { urea:tetap.urea, sp36:tetap.sp36, kcl:tetap.kcl }; d.N = d.urea * 0.46; d.P2O5 = d.sp36 * 0.36; d.K2O = d.kcl * 0.60; ket = tetap.ket + ' '; }
-    else d = C.pupukTunggal(K, { hasil:kelas.id, p:$('ppP').value, k:$('ppK').value, jerami:$('ppJerami').checked });
-    var NAMA = { urea:'Urea', sp36:'SP-36', kcl:'KCl', npk:p.majemuk.nama }, dosis, hara = { N:d.N, P:d.P2O5, K:d.K2O };
-    if (F.pupuk === 'tunggal') dosis = { urea:d.urea, sp36:d.sp36, kcl:d.kcl };
+    else { d = C.pupukTunggal(K, { hasil:kelas.id, p:$('ppP').value, k:$('ppK').value, jeramiFr:fr });
+      var tanpa = C.pupukTunggal(K, { hasil:kelas.id, p:$('ppP').value, k:$('ppK').value, jeramiFr:0 }), hemat = tanpa.kcl - d.kcl;
+      $('ppJeramiKet').innerHTML = jer > 0 ? 'Jerami yang kembali ke lahan <strong>' + fmt(jer, 1) + ' t/ha</strong> (dari riwayat jerami di modul Pembenah tanah)' + (hemat > 0.5 ? ', sehingga KCl dikurangi <strong>' + fmt(hemat, 0) + ' kg/ha</strong>.' : '; pada status K ini takaran KCl tidak berubah.') :
+        'Tidak ada jerami yang kembali ke lahan menurut modul Pembenah tanah, jadi KCl diberikan penuh.'; }
+    var npkP = p.produkNpk.filter(function(x){ return x[0] === ($('ppNpk') ? $('ppNpk').value : 'subsidi'); })[0], pP = p.produkP.filter(function(x){ return x[0] === ($('ppSumberP') ? $('ppSumberP').value : 'sp36'); })[0];
+    var NAMA = { urea:'Urea', sp36:pP[2], kcl:'KCl', npk:npkP[2], za:'ZA' }, dosis, hara = { N:d.N, P:d.P2O5, K:d.K2O }, jadwal = S.profil.eko === 'gogo' ? p.jadwalGogo : p.jadwal;
+    if (F.pupuk === 'tunggal'){ var za = Math.max(0, num('ppZa') || 0), ureaZa = Math.min(d.urea, za * p.za.n / 46);
+      dosis = { urea:d.urea - ureaZa, sp36:d.sp36, kcl:d.kcl }; if (za > 0){ dosis.za = za; ket += 'ZA ' + fmt(za, 0) + ' kg/ha menggantikan ' + fmt(ureaZa, 0) + ' kg/ha urea dan menambah ' + fmt(za * p.za.s / 100, 0) + ' kg/ha belerang. '; }
+      jadwal = jadwal.map(function(j, i){ var o = {}; Object.keys(j).forEach(function(k){ o[k] = j[k]; }); o.za = i === 0 ? 1 : 0; return o; }); }
     else { var m = C.pupukMajemuk(d, p.majemuk); dosis = { npk:m.npk, urea:m.urea }; if (m.kcl > 0.5) dosis.kcl = m.kcl; hara.K = d.K2O + m.kLebih;
-      ket += 'Takaran ' + p.majemuk.nama + ' dipatok untuk memenuhi kebutuhan P. ' + (m.kcl > 0.5 ? 'Kekurangan K ditutup dengan KCl. ' : ''); }
-    var urut = ['npk','urea','sp36','kcl'].filter(function(k){ return dosis[k] != null && dosis[k] > 0.5; }), f = S.areaM2 / 10000;
-    var jadwal = S.profil.eko === 'gogo' ? p.jadwalGogo : p.jadwal, jd = C.jadwalPupuk(K, dosis, S.areaM2, jadwal), t0 = S.profil.tanam;
+      ket += 'Takaran ' + NAMA.npk + ' dipatok untuk memenuhi kebutuhan P. ' + (m.kcl > 0.5 ? 'Kekurangan K ditutup dengan KCl. ' : '');
+      if ($('ppNpkKali').value === '2' && jadwal.length > 1) jadwal = jadwal.map(function(j, i){ var o = {}; Object.keys(j).forEach(function(k){ o[k] = j[k]; }); o.npk = i < 2 ? 0.5 : 0; return o; }); }
+    var urut = ['npk','urea','za','sp36','kcl'].filter(function(k){ return dosis[k] != null && dosis[k] > 0.5; }), f = S.areaM2 / 10000;
+    var jd = C.jadwalPupuk(K, dosis, S.areaM2, jadwal), t0 = S.profil.tanam;
     var baris = urut.map(function(k){ var kg = dosis[k] * f; return '<tr><td>' + NAMA[k] + '</td><td class="num">' + fmt(dosis[k], 0) + ' kg/ha</td><td class="num">' + fmtKg(kg) + '</td><td class="num">' + fmt(Math.ceil(kg / 50), 0) + '</td></tr>'; }).join('');
     var jb = jd.map(function(j, i){ return '<tr><td>' + j.waktu + (t0 ? '<br><span style="color:var(--gold-soft);font-size:0.78rem;">' + tgl(C.tambahHari(t0, jadwal[i].h0)) + ' – ' + tgl(C.tambahHari(t0, jadwal[i].h1)) + '</span>' : '') + '</td>' +
       urut.map(function(k){ return '<td class="num">' + (j[k] > 0.05 ? fmtKg(j[k]) : '–') + '</td>'; }).join('') + '</tr>'; }).join('');
@@ -1746,11 +1963,11 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
       fld('orTinggal', 'Jerami yang tertinggal (%)', o.panenLalu[0].tinggal, o.panenLalu[0].ket + ' Bisa diubah.', 'min="0" max="100" data-ket="1"') +
       fld('orHasilLalu', 'Hasil panen musim lalu (t/ha GKP)', o.hasilLalu, 'Dipakai untuk menaksir banyaknya jerami.') +
       fld('orRasio', 'Jerami per gabah', o.rasioJerami, 'Setiap 1 ton gabah menghasilkan kira-kira 1–1,5 ton jerami.') +
-      fld('orKarung', 'Isi per karung (kg)', 50) + '</div>' +
+      fld('orKarung', 'Isi per karung (kg)', 50) + sel('orProduk', 'Produk pupuk organik padat', o.produkPadat.map(function(x){ return [x[0], x[1]]; }), 'umum', 'Produk OFAGRO dihitung dengan takaran yang sama.') + '</div>' +
       '<div style="margin-top:22px;">' + h3(3, 'Pupuk organik cair (POC)') + '</div><p class="src" style="margin-top:0;">Centang POC yang dipakai. Tiap jenis punya kepekatan dan waktu pakai sendiri.</p>' +
       K.poc.map(function(x){
         return '<div class="poc-item"><label class="cek"><input type="checkbox" id="pcOn_' + x.id + '"' + (x.pakai ? ' checked' : '') + '><span><strong>' + esc(x.label) + '</strong>' + (x.st === 'acuan' ? ' <span class="tag gold">acuan OFAGRO</span>' : '') + '<br><span class="help">' + esc(x.ket) + '</span></span></label>' +
-          '<div class="grid2">' + fld('pcKons_' + x.id, 'Kepekatan (ml per liter air)', x.kons, x.st === 'acuan' ? 'Acuan ' + x.kons + ' ml/L.' : 'Angka awal; ganti sesuai label produk.') +
+          '<div class="grid3">' + sel('pcProd_' + x.id, 'Produk', [['umum','Produk umum atau merek lain'],['ofagro', x.ofagro]], 'umum', 'Produk OFAGRO dihitung dengan kepekatan yang sama.') + fld('pcKons_' + x.id, 'Kepekatan (ml per liter air)', x.kons, x.st === 'acuan' ? 'Acuan ' + x.kons + ' ml/L.' : 'Angka awal; ganti sesuai label produk.') +
           fld('pcKali_' + x.id, 'Jumlah aplikasi', x.kali, x.sasaran === 'tanah' ? 'Diberikan ke tanah atau jerami.' : 'Disemprot ke daun, pagi atau sore.') + '</div></div>'; }).join('') +
       '<div class="grid2" style="margin-top:14px;">' + fld('orVol', 'Volume semprot (L/ha)', 400) + fld('orTangki', 'Isi tangki (L)', 16) + '</div>';
     $('f-pembenah').innerHTML = h;
@@ -1778,6 +1995,8 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     J.olah = r && r.tHa > 0 ? nb + ' ' + fmtKg(r.kg) + '.' : '';
     /* POP: sasaran bahan organik dikurangi jerami yang tertinggal di lahan */
     var og = K.organik, tgt = num('orTarget') || 0, kj = C.kreditJerami({ hasilLalu:num('orHasilLalu'), rasio:num('orRasio'), tinggal:Math.min(100, num('orTinggal') || 0), target:tgt, setara:og.padatTHa / og.jeramiTHa });
+    J.jerami = kj.jerami;
+    var popNama = og.produkPadat.filter(function(x){ return x[0] === $('orProduk').value; })[0][2];
     if (tgt > 0){
       var p = C.organikPadat(S.areaM2, kj.perlu, num('orKarung') || 50), hem = tgt - kj.perlu;
       var ctJ = '<div class="note-box"><strong>Cara hitung:</strong> jerami tertinggal ' + fmt(kj.jerami, 1) + ' t/ha (hasil ' + fmt(num('orHasilLalu') || 0, 1) + ' t/ha × ' + fmt(num('orRasio') || 0, 1) + ' × ' + fmt(num('orTinggal') || 0, 0) + '%). ' +
@@ -1785,9 +2004,9 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
         (kj.jerami > 0 ? ' Jerami baru bermanfaat bila sudah lapuk: semprot dekomposer lalu benamkan paling lambat 2 minggu sebelum tanam.' : '') +
         (kj.jerami >= 4 ? ' Karena jerami yang kembali cukup banyak, centang pilihan jerami di modul Pupuk supaya takaran KCl dikurangi.' : '') + '</div>';
       if (kj.perlu > 0.005){
-        out += hasil('Pupuk organik padat yang perlu ditambah', fmtKg(p.kg), fmt(kj.perlu, 2) + ' t/ha, ' + subLahan(), [mini('Karung', fmt(Math.ceil(p.karung), 0)), mini('Jerami tertinggal', fmt(kj.jerami, 1) + ' t/ha'), mini('Dihemat dari jerami', fmt(hem, 2) + ' t/ha')], ctJ);
-        rows.push(['Pupuk organik padat', fmtKg(p.kg), fmt(kj.perlu, 2) + ' t/ha' + (kj.jerami > 0 ? ' setelah dikurangi jerami ' + fmt(kj.jerami, 1) + ' t/ha' : '')]);
-        J.olah += (J.olah ? ' ' : '') + 'Pupuk organik padat ' + fmtKg(p.kg) + '.';
+        out += hasil(esc(popNama) + ' yang perlu ditambah', fmtKg(p.kg), fmt(kj.perlu, 2) + ' t/ha, ' + subLahan(), [mini('Karung', fmt(Math.ceil(p.karung), 0)), mini('Jerami tertinggal', fmt(kj.jerami, 1) + ' t/ha'), mini('Dihemat dari jerami', fmt(hem, 2) + ' t/ha')], ctJ);
+        rows.push([popNama, fmtKg(p.kg), fmt(kj.perlu, 2) + ' t/ha' + (kj.jerami > 0 ? ' setelah dikurangi jerami ' + fmt(kj.jerami, 1) + ' t/ha' : '')]);
+        J.olah += (J.olah ? ' ' : '') + popNama + ' ' + fmtKg(p.kg) + '.';
       } else {
         out += hasil('Pupuk organik padat yang perlu ditambah', 'Tidak perlu', 'jerami tertinggal ' + fmt(kj.jerami, 1) + ' t/ha sudah menutup sasaran ' + fmt(tgt, 1) + ' t/ha', [mini('Jerami tertinggal', fmt(kj.jerami, 1) + ' t/ha'), mini('Setara pupuk organik', fmt(kj.kredit, 2) + ' t/ha')], ctJ);
         rows.push(['Pupuk organik padat', 'Tidak perlu', 'tertutup jerami ' + fmt(kj.jerami, 1) + ' t/ha']);
@@ -1800,44 +2019,53 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     K.poc.forEach(function(x){
       if (!$('pcOn_' + x.id).checked) return;
       var kons = num('pcKons_' + x.id) || 0, kali = Math.round(num('pcKali_' + x.id) || 0); if (!(kons > 0) || !(kali > 0) || !(vol > 0)) return;
-      var c = C.organikCair({ m2:S.areaM2, konsMlL:kons, volHa:vol, tangkiL:tk, kali:kali }), hh = C.jadwalPoc(x.h, kali);
+      var c = C.organikCair({ m2:S.areaM2, konsMlL:kons, volHa:vol, tangkiL:tk, kali:kali }), hh = C.jadwalPoc(x.h, kali), nmP = $('pcProd_' + x.id).value === 'ofagro' ? x.ofagro : x.label;
       var wkt = hh.map(function(h){ return h < 0 ? Math.abs(h) + ' hari sebelum tanam' : h + ' HST'; }).join(', ');
       totPoc += c.totalL;
-      pocRows += '<tr><td>' + esc(x.label) + '</td><td class="num">' + fmt(kons, 1) + ' ml/L</td><td class="num">' + fmt(c.perTangkiMl, 0) + ' ml</td><td class="num">' + fmtVol(c.sekaliL) + '</td><td class="num">' + kali + '×</td><td class="num">' + fmtVol(c.totalL) + '</td><td>' + wkt + '</td></tr>';
-      rows.push([(/^POC/.test(x.label) ? '' : 'POC: ') + x.label, fmtVol(c.totalL), fmt(kons, 1) + ' ml/L, ' + kali + ' kali']);
-      hh.forEach(function(h, i){ J.poc.push({ h0:h, apa:x.label + (kali > 1 ? ' ke-' + (i + 1) : ''), ket:fmt(kons, 1) + ' ml per liter air (' + fmt(c.perTangkiMl, 0) + ' ml per tangki ' + fmt(tk, 0) + ' L), ' + fmtVol(c.sekaliL) + ' untuk lahan ini. ' + (x.sasaran === 'tanah' ? 'Ke tanah atau jerami.' : 'Semprot ke daun.') }); });
+      pocRows += '<tr><td>' + esc(nmP) + '</td><td class="num">' + fmt(kons, 1) + ' ml/L</td><td class="num">' + fmt(c.perTangkiMl, 0) + ' ml</td><td class="num">' + fmtVol(c.sekaliL) + '</td><td class="num">' + kali + '×</td><td class="num">' + fmtVol(c.totalL) + '</td><td>' + wkt + '</td></tr>';
+      rows.push([(/POC|OFAGRO/.test(nmP) ? '' : 'POC: ') + nmP, fmtVol(c.totalL), fmt(kons, 1) + ' ml/L, ' + kali + ' kali']);
+      hh.forEach(function(h, i){ J.poc.push({ h0:h, apa:nmP + (kali > 1 ? ' ke-' + (i + 1) : ''), ket:fmt(kons, 1) + ' ml per liter air (' + fmt(c.perTangkiMl, 0) + ' ml per tangki ' + fmt(tk, 0) + ' L), ' + fmtVol(c.sekaliL) + ' untuk lahan ini. ' + (x.sasaran === 'tanah' ? 'Ke tanah atau jerami.' : 'Semprot ke daun.') }); });
     });
     if (pocRows) out += hasil('Pupuk organik cair', fmtVol(totPoc), 'total semua jenis, ' + subLahan(), [mini('Air sekali semprot', fmt(vol * S.areaM2 / 10000, 0) + ' L'), mini('Tangki sekali semprot', fmt(Math.ceil(vol * S.areaM2 / 10000 / tk), 0))],
       '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Jenis</th><th>Kepekatan</th><th>Per tangki ' + fmt(tk, 0) + ' L</th><th>Sekali aplikasi</th><th>Aplikasi</th><th>Total</th><th>Waktu</th></tr></thead><tbody>' + pocRows + '</tbody></table></div>' +
       '<div class="note-box"><strong>Catatan:</strong> kepekatan dekomposer memakai acuan 10 ml per liter air. Kepekatan asam humat, asam amino, dan POC nutrisi adalah angka awal; ganti dengan angka di label produk yang dipakai.</div>');
     $('r-pembenah').innerHTML = out + src(['pupuk']); setRows('pembenah', rows);
+    if ($('ppHasil')) hit.pupuk();   /* riwayat jerami mengubah takaran KCl */
   };
 
   /* =====================================================================
      6. ESTIMASI HASIL — ubinan, rumpun contoh, contoh per meter
      ===================================================================== */
   function daftarAngka(id){ return String($(id).value).split(/[;\s]+/).map(function(s){ return parseFloat(s.replace(',', '.')); }).filter(function(v){ return !isNaN(v) && v > 0; }); }
+  function caraPanen(){ return K.caraPanen.filter(function(x){ return x.id === ($('esPanen') ? $('esPanen').value : ''); })[0] || K.caraPanen[0]; }
   build.estimasi = function(){
-    var pn = K.panen, s = sistem(), h = seg('estimasi', [['ubinan','Ubinan'],['rumpun','Rumpun contoh'],['meter','Contoh per meter']], F.estimasi) + '<div class="grid3" style="margin-top:14px;">';
+    var pn = K.panen, s = sistem(), cara = [['ubinan','Ubinan']];
+    if (s.rumpunM2) cara.push(['rumpun','Rumpun contoh']); else if (F.estimasi === 'rumpun') F.estimasi = 'ubinan';   /* tabela tidak berumpun */
+    cara.push(['meter','Contoh per meter']);
+    var h = seg('estimasi', cara, F.estimasi) + (s.rumpunM2 ? '' : '<p class="src">Tabela tidak berumpun, jadi cara rumpun contoh tidak dipakai. Ubinan adalah cara yang paling cocok' + (s.jarakBaris ? '; contoh per meter baris juga bisa untuk larikan.' : '.') + '</p>') + '<div class="grid3" style="margin-top:14px;">';
     var bantu = '<span class="help">Pisahkan tiap contoh dengan titik koma atau spasi. Minimal 3 contoh per lahan, diambil acak dan tidak di pinggir.</span>';
-    if (F.estimasi === 'ubinan') h += fld('esP', 'Panjang ubinan (m)', pn.ubinP) + fld('esL', 'Lebar ubinan (m)', pn.ubinL, 'Ukuran baku BPS 2,5 m × 2,5 m.') + fld('esKA', 'Kadar air saat panen (%)', '', 'Bila kosong, GKG dihitung dengan konversi ' + String(pn.gkpKeGkg).replace('.', ',') + '%.') +
+    if (F.estimasi === 'ubinan') h += fld('esP', 'Panjang ubinan (m)', s.ubin[0], esc(s.ubinKet)) + fld('esL', 'Lebar ubinan (m)', s.ubin[1], s.rumpunM2 ? 'Ubinan ini berisi ' + fmt(s.ubin[0] * s.ubin[1] * s.rumpunM2, 0) + (s.pindah ? ' rumpun.' : ' lubang.') : 'Baku BPS 2,5 m × 2,5 m.') + fld('esKA', 'Kadar air saat panen (%)', '', 'Bila kosong, GKG dihitung dengan konversi ' + String(pn.gkpKeGkg).replace('.', ',') + '%.') +
       '<div class="fld full"><label for="esBerat">Berat gabah tiap ubinan (kg)</label><input class="inp" id="esBerat" inputmode="text" placeholder="3,2; 3,5; 3,1">' + bantu + '</div>';
-    else if (F.estimasi === 'rumpun') h += fld('esRumpun', 'Jumlah rumpun per m²', s.rumpunM2 ? +s.rumpunM2.toFixed(1) : 16, s.rumpunM2 ? 'Dari sistem tanam di profil.' : 'Hitung langsung pada 1 m².') + fld('esMalai', 'Malai per rumpun', '', 'Rata-rata dari 10 rumpun contoh.') +
-      fld('esGabah', 'Gabah isi per malai', '', 'Rata-rata dari 10 malai contoh.') + fld('esB1000', 'Bobot 1.000 butir (g)', (varDipilih() || {}).b1000 || K.benih.b1000) + fld('esKor', 'Faktor koreksi', 0.85, 'Untuk kehilangan hasil dan galengan; 1 berarti tanpa koreksi.');
-    else { h += '<div class="fld full"><label>Jenis contoh</label>' + seg('meter', [['m2','Per meter persegi'],['baris','Per meter baris']], F.meter) + '</div>';
+    else if (F.estimasi === 'rumpun') h += fld('esRumpun', 'Jumlah rumpun per m²', +s.rumpunM2.toFixed(2), 'Dari sistem tanam di profil: ' + fmt(s.rumpunM2 * 10000, 0) + ' per hektare.') + fld('esMalai', 'Malai per rumpun', '', 'Rata-rata dari 10 rumpun contoh.') +
+      fld('esGabah', 'Gabah isi per malai', '', 'Rata-rata dari 10 malai contoh.') + fld('esB1000', 'Bobot 1.000 butir (g)', (varDipilih() || {}).b1000 || K.benih.b1000);
+    else { h += '<div class="fld full"><label>Jenis contoh</label>' + seg('meter', [['m2','Per meter persegi'],['baris','Per meter baris']], F.meter) + '<span class="help">Per meter baris cocok untuk tabela larikan dan tanam berbaris.</span></div>';
       if (F.meter === 'm2') h += '<div class="fld full"><label for="esBerat">Berat gabah tiap contoh 1 m² (kg)</label><input class="inp" id="esBerat" inputmode="text" placeholder="0,55; 0,60; 0,52">' + bantu + '</div>';
-      else h += fld('esJarak', 'Jarak antarbaris (cm)', 25, 'Untuk tabela larikan atau tanam berbaris.') + '<div class="fld" style="grid-column:span 2;"><label for="esBerat">Berat gabah tiap 1 meter baris (gram)</label><input class="inp" id="esBerat" inputmode="text" placeholder="140; 155; 150">' + bantu + '</div>';
+      else h += fld('esJarak', 'Jarak antarbaris (cm)', s.jarakBaris || 25, 'Untuk tabela larikan atau tanam berbaris.') + '<div class="fld" style="grid-column:span 2;"><label for="esBerat">Berat gabah tiap 1 meter baris (gram)</label><input class="inp" id="esBerat" inputmode="text" placeholder="140; 155; 150">' + bantu + '</div>';
       h += fld('esKA', 'Kadar air saat panen (%)', '', 'Bila kosong, dipakai konversi GKP ke GKG.'); }
-    $('f-estimasi').innerHTML = h + '</div>';
+    h += '</div><div style="margin-top:22px;">' + h3(2, 'Koreksi ke hasil riil') + '</div><div class="grid3">' +
+      sel('esPanen', 'Cara panen', K.caraPanen.map(function(x){ return [x.id, x.label]; }), K.caraPanen[0].id, 'Menentukan besarnya gabah yang tercecer.') +
+      fld('esHilang', 'Kehilangan saat panen (%)', K.caraPanen[0].hilang, K.caraPanen[0].ket + ' Bisa diubah.') +
+      '<div class="fld"><label for="esSaluran">Luas untuk saluran keliling (%)</label><input class="inp" type="number" step="0.1" min="0" max="30" inputmode="decimal" id="esSaluran" value="' + salPersen() + '"><span class="help">Bagian lahan yang tidak ditanami; sama dengan isian di modul Benih.</span></div></div>';
+    $('f-estimasi').innerHTML = h;
   };
   hit.estimasi = function(){
-    var pn = K.panen, f = S.areaM2 ? S.areaM2 / 10000 : null, kurang = '<div class="note-box">Lengkapi isian untuk melihat taksiran hasil.</div>', gkp = null, gkg, sub, label = 'Hasil gabah kering giling';
+    var pn = K.panen, f = S.areaM2 ? S.areaM2 / 10000 : null, kurang = '<div class="note-box">Lengkapi isian untuk melihat taksiran hasil.</div>', gkp = null, gkg, sub, label = 'Perkiraan hasil riil (gabah kering giling)';
     function keGkg(g){ var ka = num('esKA'); return ka != null ? C.koreksiKA(g, ka, pn.kaStandar) : g * pn.gkpKeGkg / 100; }
-    S.est = null;
+    S.est = null; syncSaluran();
     if (F.estimasi === 'rumpun'){
-      var a = { rumpunM2:num('esRumpun'), malai:num('esMalai'), gabahIsi:num('esGabah'), b1000:num('esB1000'), koreksi:num('esKor') };
+      var a = { rumpunM2:num('esRumpun'), malai:num('esMalai'), gabahIsi:num('esGabah'), b1000:num('esB1000'), koreksi:1 };
       if (!a.rumpunM2 || !a.malai || !a.gabahIsi || !a.b1000){ $('r-estimasi').innerHTML = kurang; setRows('estimasi', null); return; }
-      gkg = C.rumpunPadi(a).tHa; sub = fmt(a.rumpunM2, 1) + ' rumpun/m² × ' + fmt(a.malai, 1) + ' malai × ' + fmt(a.gabahIsi, 0) + ' gabah isi × ' + fmt(a.b1000, 1) + ' g'; label = 'Taksiran gabah kering giling';
+      gkg = C.rumpunPadi(a).tHa; sub = fmt(a.rumpunM2, 1) + ' rumpun/m² × ' + fmt(a.malai, 1) + ' malai × ' + fmt(a.gabahIsi, 0) + ' gabah isi × ' + fmt(a.b1000, 1) + ' g';
     } else {
       var c = daftarAngka('esBerat');
       if (!c.length){ $('r-estimasi').innerHTML = kurang; setRows('estimasi', null); return; }
@@ -1847,12 +2075,17 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
       else { var j = num('esJarak'); if (!j){ $('r-estimasi').innerHTML = kurang; setRows('estimasi', null); return; } gkp = C.estBaris({ gram:c, jarakCm:j }).tHa; sub = 'rata-rata dari ' + c.length + ' contoh 1 meter baris, jarak ' + fmt(j, 0) + ' cm'; }
       gkg = keGkg(gkp); if (c.length < 3) sub += ' (tambah contoh agar lebih mewakili)';
     }
-    var minis = []; if (gkp != null) minis.push(mini('Gabah kering panen', fmt(gkp, 2) + ' t/ha'));
-    minis.push(mini('Setara beras', fmt(gkg * pn.gkgKeBeras / 100, 2) + ' t/ha'));
-    minis.push(f ? mini('Untuk lahan ini', fmtKg(gkg * f * 1000) + ' GKG', gkp != null ? fmtKg(gkp * f * 1000) + ' GKP' : '') : mini('Untuk lahan ini', '–', 'isi luas lahan'));
-    S.est = { gkpHa:gkp, gkgHa:gkg };
-    $('r-estimasi').innerHTML = hasil(label, fmt(gkg, 2) + ' t/ha', sub, minis, '<div class="note-box"><strong>Catatan:</strong> taksiran sebelum panen selalu berselisih dengan hasil timbang. Lanjutkan ke modul Rendemen untuk menghitung sampai beras.</div>' + src(['ubinan']));
-    setRows('estimasi', [['Estimasi hasil', fmt(gkg, 2) + ' t/ha GKG', f ? fmtKg(gkg * f * 1000) + ' untuk lahan ini' : sub]]);
+    /* hasil contoh → hasil riil: dikurangi luas saluran dan kehilangan saat panen */
+    var sal = Math.max(0, num('esSaluran') || 0), hil = Math.max(0, num('esHilang') || 0), kor = C.hasilRiil(1, sal, hil);
+    var gkgR = gkg * kor, gkpR = gkp != null ? gkp * kor : null;
+    var minis = [mini('Hasil contoh (potensi)', fmt(gkg, 2) + ' t/ha GKG', gkp != null ? fmt(gkp, 2) + ' t/ha GKP' : 'sebelum koreksi')];
+    minis.push(mini('Koreksi', '−' + fmt((1 - kor) * 100, 1) + '%', 'saluran ' + fmt(sal, 1) + '% dan kehilangan panen ' + fmt(hil, 1) + '%'));
+    if (gkpR != null) minis.push(mini('Gabah kering panen', fmt(gkpR, 2) + ' t/ha'));
+    minis.push(mini('Setara beras', fmt(gkgR * pn.gkgKeBeras / 100, 2) + ' t/ha'));
+    minis.push(f ? mini('Untuk lahan ini', fmtKg(gkgR * f * 1000) + ' GKG', gkpR != null ? fmtKg(gkpR * f * 1000) + ' GKP' : '') : mini('Untuk lahan ini', '–', 'isi luas lahan'));
+    S.est = { gkpHa:gkpR, gkgHa:gkgR };
+    $('r-estimasi').innerHTML = hasil(label, fmt(gkgR, 2) + ' t/ha', sub, minis, '<div class="note-box"><strong>Cara hitung:</strong> hasil contoh × (100% − saluran ' + fmt(sal, 1) + '%) × (100% − kehilangan panen ' + fmt(hil, 1) + '%). Hasil contoh mewakili petak yang ditanami penuh; hasil riil adalah yang benar-benar masuk karung dari seluruh luas lahan. Lanjutkan ke modul Rendemen untuk menghitung sampai beras.</div>' + src(['ubinan']));
+    setRows('estimasi', [['Estimasi hasil', fmt(gkgR, 2) + ' t/ha GKG', (f ? fmtKg(gkgR * f * 1000) + ' untuk lahan ini' : sub) + ', sudah dikurangi saluran dan kehilangan panen ' + fmt((1 - kor) * 100, 1) + '%']]);
   };
 
   /* =====================================================================
@@ -1867,28 +2100,41 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
     var pn = K.panen;
     $('f-rendemen').innerHTML = h3(1, 'Gabah') + '<div class="grid3">' + fld('rdKotor', 'Berat gabah panen (kg)', '', 'Hasil timbang di sawah. Terisi otomatis dari Estimasi hasil bila ada.') +
       fld('rdKotoran', 'Hampa dan kotoran (%)', 3, 'Yang terbuang saat dibersihkan.') + fld('rdKA', 'Kadar air saat panen (%)', 25, 'Gabah baru panen biasanya 22–27%.') +
-      fld('rdGiling', 'Rendemen giling GKG ke beras (%)', pn.gkgKeBeras, 'Angka nasional BPS 2018; penggilingan kecil sering 60–63%.') + fld('rdSekam', 'Sekam (% GKG)', pn.sekam) + fld('rdDedak', 'Dedak dan bekatul (% GKG)', pn.dedak) + '</div>' +
-      '<div style="margin-top:22px;">' + h3(2, 'Harga (pilihan)') + '</div><div class="grid4">' + fld('rdHGkp', 'Harga GKP (Rp/kg)', '') + fld('rdHGkg', 'Harga GKG (Rp/kg)', '') + fld('rdHBeras', 'Harga beras (Rp/kg)', '') + fld('rdBiaya', 'Biaya jemur dan giling (Rp/kg GKG)', '', 'Kosongkan bila tidak dihitung.') + '</div>';
+      fld('rdGiling', 'Rendemen giling GKG ke beras (%)', pn.gkgKeBeras, 'Semua hasil giling termasuk menir. Angka nasional BPS 2018; penggilingan kecil sering 60–63%.') + fld('rdMenir', 'Menir (% GKG)', pn.menir, 'Butir patah kecil yang dipisahkan dari beras; umumnya 1–4% dari berat GKG, lebih banyak bila gabah terlalu kering atau mesin aus.') +
+      fld('rdSekam', 'Sekam (% GKG)', pn.sekam) + fld('rdDedak', 'Dedak dan bekatul (% GKG)', pn.dedak) + '</div>' +
+      '<div style="margin-top:22px;">' + h3(2, 'Harga (pilihan)') + '</div><div class="grid3">' + fld('rdHGkp', 'Harga GKP (Rp/kg)', '') + fld('rdHGkg', 'Harga GKG (Rp/kg)', '') + fld('rdHBeras', 'Harga beras (Rp/kg)', '') +
+      fld('rdHDedak', 'Harga dedak (Rp/kg)', '', 'Hasil jual dedak ditambahkan ke pilihan jual beras.') + fld('rdHMenir', 'Harga menir (Rp/kg)', '', 'Hasil jual menir ditambahkan ke pilihan jual beras.') +
+      fld('rdBiaya', 'Biaya jemur dan giling (Rp/kg GKG)', '', 'Bila kosong, dipakai Rp ' + fmt(pn.biayaGiling, 0) + ' per kg GKG.') + '</div>';
+    $('rdBiaya').placeholder = pn.biayaGiling;
   };
   function rp(n){ return 'Rp ' + fmt(Math.round(n), 0); }
   hit.rendemen = function(){
     var kotor = num('rdKotor'), ka = num('rdKA'), pn = K.panen;
-    if (!(kotor > 0) || ka == null){ $('r-rendemen').innerHTML = '<div class="note-box">Isi <strong>berat gabah panen</strong> dan kadar airnya.</div>'; setRows('rendemen', null); return; }
-    if (ka < pn.kaStandar || ka > 40){ $('r-rendemen').innerHTML = '<div class="warn-box">Kadar air panen harus antara ' + pn.kaStandar + '% dan 40%.</div>'; setRows('rendemen', null); return; }
-    var r = C.rendemen({ kotor:kotor, kotoran:num('rdKotoran') || 0, ka:ka, kaStd:pn.kaStandar, giling:num('rdGiling') || pn.gkgKeBeras, sekam:num('rdSekam') || 0, dedak:num('rdDedak') || 0 });
+    var ingat = '<div class="card" style="margin-top:14px;"><h3>Pengingat supaya rendemen tinggi</h3><ul class="plain">' +
+      '<li><strong>Waktu panen:</strong> panen saat 90–95% gabah menguning. Terlalu awal banyak butir hijau dan mengapur; terlambat banyak gabah rontok dan beras patah.</li>' +
+      '<li><strong>Sebelum panen:</strong> keringkan petakan sekitar 10 hari sebelum panen supaya gabah masak merata dan mesin panen tidak terbenam.</li>' +
+      '<li><strong>Setelah dipotong:</strong> rontokkan pada hari yang sama. Padi yang ditumpuk lebih dari semalam menjadi panas, lalu berasnya kuning dan mudah patah.</li>' +
+      '<li><strong>Pengeringan:</strong> jemur setebal 5–7 cm dan balik tiap 1–2 jam. Pengeringan terlalu cepat atau terlalu panas membuat butir retak.</li>' +
+      '<li><strong>Kadar air ke penggilingan:</strong> giling GKG pada kadar air <strong>' + pn.kaGilingMin + '–' + pn.kaGilingMaks + '%</strong>. Di bawah 12% banyak beras patah dan menir; di atas 14% beras kusam, mudah hancur, dan tidak tahan simpan.</li>' +
+      '<li><strong>Keadaan mesin:</strong> rol karet yang aus, jarak rol yang tidak pas, dan ayakan yang rusak menurunkan rendemen dan menambah beras patah. Penggilingan dengan pemecah kulit, pemisah gabah, dan pemoles terpisah memberi rendemen lebih tinggi daripada mesin satu kali jalan.</li>' +
+      '<li><strong>Kebersihan gabah:</strong> gabah hampa, jerami, dan tanah yang ikut tergiling menurunkan rendemen dan mempercepat aus mesin.</li></ul></div>';
+    if (!(kotor > 0) || ka == null){ $('r-rendemen').innerHTML = '<div class="note-box">Isi <strong>berat gabah panen</strong> dan kadar airnya.</div>' + ingat; setRows('rendemen', null); return; }
+    if (ka < pn.kaStandar || ka > 40){ $('r-rendemen').innerHTML = '<div class="warn-box">Kadar air panen harus antara ' + pn.kaStandar + '% dan 40%.</div>' + ingat; setRows('rendemen', null); return; }
+    var r = C.rendemen({ kotor:kotor, kotoran:num('rdKotoran') || 0, ka:ka, kaStd:pn.kaStandar, giling:num('rdGiling') || pn.gkgKeBeras, sekam:num('rdSekam') || 0, dedak:num('rdDedak') || 0, menir:num('rdMenir') || 0 });
     var step = function(l, v, n){ return '<div class="f-step"><div class="mini-label">' + l + '</div><div class="mini-value">' + fmtKg(v) + '</div><div class="mini-note">' + n + '</div></div>'; };
-    var out = '<div class="result-card"><div class="r-label">Rendemen gabah panen ke beras</div><div class="r-value">' + fmt(r.rendTotal, 1) + '%</div><div class="r-sub">' + fmtKg(kotor) + ' gabah panen menjadi ' + fmtKg(r.beras) + ' beras</div>' +
-      '<div class="flow">' + step('Gabah panen', kotor, 'KA ' + fmt(ka, 0) + '%') + step('GKP bersih', r.gkp, 'buang ' + fmt(num('rdKotoran') || 0, 0) + '% kotoran') + step('GKG', r.gkg, 'KA ' + pn.kaStandar + '%, ' + fmt(r.rendGkpGkg, 1) + '% dari GKP') + step('Beras', r.beras, fmt(num('rdGiling') || pn.gkgKeBeras, 1) + '% dari GKG') + '</div>' +
-      '<div class="result-grid">' + mini('Sekam', fmtKg(r.sekam)) + mini('Dedak dan bekatul', fmtKg(r.dedak)) + mini('Susut jemur', fmtKg(r.gkp - r.gkg), 'air yang menguap') + '</div>';
-    var hg = num('rdHGkp'), hk = num('rdHGkg'), hb = num('rdHBeras'), by = num('rdBiaya') || 0, pil = [];
+    var out = '<div class="result-card"><div class="r-label">Rendemen gabah panen ke beras</div><div class="r-value">' + fmt(r.rendTotal, 1) + '%</div><div class="r-sub">' + fmtKg(kotor) + ' gabah panen menjadi ' + fmtKg(r.beras) + ' beras' + (r.menir > 0 ? ' dan ' + fmtKg(r.menir) + ' menir' : '') + '</div>' +
+      '<div class="flow">' + step('Gabah panen', kotor, 'KA ' + fmt(ka, 0) + '%') + step('GKP bersih', r.gkp, 'buang ' + fmt(num('rdKotoran') || 0, 0) + '% kotoran') + step('GKG', r.gkg, 'KA ' + pn.kaStandar + '%, ' + fmt(r.rendGkpGkg, 1) + '% dari GKP') + step('Beras', r.beras, fmt(num('rdGiling') || pn.gkgKeBeras, 1) + '% dari GKG' + (r.menir > 0 ? ' dikurangi menir' : '')) + '</div>' +
+      '<div class="result-grid">' + mini('Menir', fmtKg(r.menir), fmt(num('rdMenir') || 0, 1) + '% dari GKG') + mini('Dedak dan bekatul', fmtKg(r.dedak)) + mini('Sekam', fmtKg(r.sekam)) + mini('Susut jemur', fmtKg(r.gkp - r.gkg), 'air yang menguap') + '</div>';
+    var hg = num('rdHGkp'), hk = num('rdHGkg'), hb = num('rdHBeras'), hd = num('rdHDedak') || 0, hm = num('rdHMenir') || 0, byIsi = num('rdBiaya'), by = byIsi != null ? byIsi : pn.biayaGiling, pil = [];
     if (hg > 0) pil.push(['Jual gabah kering panen', r.gkp * hg, fmtKg(r.gkp) + ' × ' + rp(hg)]);
     if (hk > 0) pil.push(['Jual gabah kering giling', r.gkg * hk, fmtKg(r.gkg) + ' × ' + rp(hk)]);
-    if (hb > 0) pil.push(['Jual beras', r.beras * hb - r.gkg * by, fmtKg(r.beras) + ' × ' + rp(hb) + (by ? ' dikurangi biaya ' + rp(r.gkg * by) : '')]);
+    if (hb > 0){ var samping = r.dedak * hd + r.menir * hm;
+      pil.push(['Jual beras', r.beras * hb + samping - r.gkg * by, 'beras ' + fmtKg(r.beras) + ' × ' + rp(hb) + (hd > 0 ? ' + dedak ' + rp(r.dedak * hd) : '') + (hm > 0 ? ' + menir ' + rp(r.menir * hm) : '') + ' − biaya jemur dan giling ' + rp(r.gkg * by) + (byIsi == null ? ' (Rp ' + fmt(by, 0) + '/kg GKG, angka bawaan)' : '')]); }
     if (pil.length){ var best = pil.slice().sort(function(a, b){ return b[1] - a[1]; })[0];
       out += '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Pilihan jual</th><th>Nilai</th><th>Hitungan</th></tr></thead><tbody>' + pil.map(function(p){ return '<tr><td>' + p[0] + (pil.length > 1 && p === best ? ' <span class="tag">tertinggi</span>' : '') + '</td><td class="num">' + rp(p[1]) + '</td><td style="color:var(--muted)">' + p[2] + '</td></tr>'; }).join('') + '</tbody></table></div>' +
-        '<p class="src">Nilai belum memperhitungkan ongkos angkut, tenaga jemur sendiri, dan hasil jual dedak.</p>'; }
-    $('r-rendemen').innerHTML = out + '<div class="note-box"><strong>Rumus:</strong> GKG = GKP × (100 − kadar air panen) ÷ (100 − ' + pn.kaStandar + '). Rendemen giling bergantung varietas, kadar air, dan mesin penggilingan.</div>' + src(['ubinan']) + '</div>';
-    setRows('rendemen', [['Rendemen', fmtKg(r.beras) + ' beras', 'dari ' + fmtKg(kotor) + ' gabah panen (' + fmt(r.rendTotal, 1) + '%)'], ['GKG', fmtKg(r.gkg), 'dari ' + fmtKg(r.gkp) + ' GKP bersih']]);
+        '<p class="src">Nilai belum memperhitungkan ongkos angkut dan tenaga sendiri. Isi harga dedak dan menir supaya hasil sampingnya ikut dihitung pada pilihan jual beras.</p>'; }
+    $('r-rendemen').innerHTML = out + '<div class="note-box"><strong>Rumus:</strong> GKG = GKP × (100 − kadar air panen) ÷ (100 − ' + pn.kaStandar + '). Beras = GKG × rendemen giling − menir. Rendemen giling bergantung varietas, penanganan sebelum dan sesudah panen, kadar air, dan keadaan mesin.</div>' + src(['ubinan']) + '</div>' + ingat;
+    setRows('rendemen', [['Rendemen', fmtKg(r.beras) + ' beras', 'dari ' + fmtKg(kotor) + ' gabah panen (' + fmt(r.rendTotal, 1) + '%)' + (r.menir > 0 ? ', menir ' + fmtKg(r.menir) : '')], ['GKG', fmtKg(r.gkg), 'dari ' + fmtKg(r.gkp) + ' GKP bersih']]);
   };
 
   function bangunSemua(){ KALK.forEach(function(k){ build[k](); }); }
@@ -2228,11 +2474,14 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
 
     KALK.forEach(function(k){
       var f = $('f-' + k);
-      f.addEventListener('input', function(e){ if (e.target.type === 'radio' || e.target.type === 'checkbox' || e.target.tagName === 'SELECT') return; if (e.target.id === 'vrCari') F.vrSemua = false; hit[k](); });
+      f.addEventListener('input', function(e){ if (e.target.type === 'radio' || e.target.type === 'checkbox' || e.target.tagName === 'SELECT') return; if (e.target.id === 'vrCari') F.vrSemua = false;
+        if (e.target.id === 'bnSaluran' || e.target.id === 'esSaluran'){ var sv = parseFloat(e.target.value); F.salManual = isFinite(sv) && sv >= 0 ? sv : null; }
+        hit[k](); });
       f.addEventListener('change', function(e){
         var t = e.target, id = t.id;
         if (t.dataset.var != null){ S.varietas = t.dataset.var; var v = varDipilih(); if (v){ if (v.b1000) $('bnB1000').value = v.b1000; if ($('bnKelas')) $('bnKelas').value = v.anak; setBibit(); } save(); }
         if (id === 'bnKelas') setBibit();
+        if (id === 'esPanen'){ var cp = K.caraPanen.filter(function(x){ return x.id === t.value; })[0]; $('esHilang').value = cp.hilang; var he = $('esHilang').parentNode.querySelector('.help'); if (he) he.textContent = cp.ket + ' Bisa diubah.'; }
         if (id === 'orPanen'){ var pl = K.organik.panenLalu.filter(function(x){ return x.id === t.value; })[0]; $('orTinggal').value = pl.tinggal; var hp = $('orTinggal').parentNode.querySelector('.help'); if (hp) hp.textContent = pl.ket + ' Bisa diubah.'; }
         if (t.dataset.ba != null){ F.ba = +t.dataset.ba; build.pestisida(); }
         if (t.dataset.gej != null){ F.gejala[t.dataset.gej] = t.checked; build.pestisida(); }
@@ -2243,6 +2492,7 @@ LP.LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAA
         hit[k]();
       });
       f.addEventListener('click', function(e){
+        if (e.target.closest('details.glos summary')){ F.glos = !F.glos; return; }
         var o = e.target.closest('[data-opt]'), b = e.target.closest('[data-seg]');
         if (o){ F.opt = o.dataset.opt; F.ba = 0; build.pestisida(); hit.pestisida(); return; }
         if (e.target.closest('[data-vr-semua]')){ F.vrSemua = true; hit.benih(); return; }
